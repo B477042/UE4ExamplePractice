@@ -31,5 +31,6 @@ public:
 		UPointLightComponent *Light;
 	UPROPERTY(VisibleAnywhere)
 		UParticleSystemComponent *Splash;
-
+	UPROPERTY(EditAnywhere,Category=ID)
+		int32 ID;
 };
