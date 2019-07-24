@@ -49,6 +49,14 @@ AABPawn::AABPawn()
 		Mesh->SetSkeletalMesh(SK_CARDBOARD.Object);
 	}
 
+
+	Mesh->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+
+	static ConstructorHelpers::FClassFinder<UAnimInstance>WARRIOR_ANIM(TEXT("/Game/ParagonShinbi/Characters/Heroes/Shinbi/Shinbi_AnimBlueprint.Shinbi_AnimBlueprint_C"));
+	if (WARRIOR_ANIM.Succeeded())
+	{
+		Mesh->SetAnimInstanceClass(WARRIOR_ANIM.Class);
+	}
 	
 
 
@@ -58,7 +66,15 @@ AABPawn::AABPawn()
 void AABPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	////대기모드
+	//이 코드는 수동으로 애니메이션을 삽입할 때 어떻게 하는지 보여주는 예시 코드다
+	//이렇게 하면 오래걸리니 블루프린트 된걸 쓰자
+	//Mesh->SetAnimationMode(EAnimationMode::AnimationSingleNode);
+	//UAnimationAsset* AnimAsset = LoadObject<UAnimationAsset>(nullptr, TEXT("/Game/ParagonShinbi/Characters/Heroes/Shinbi/Animations/AimOffsets/Idle_AO_Blendspace.Idle_AO_Blendspace"));
+	//if (AnimAsset != nullptr)
+	//{
+	//	Mesh->PlayAnimation(AnimAsset, true);
+	//}
 }
 
 // Called every frame
