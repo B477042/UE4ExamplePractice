@@ -49,15 +49,15 @@ AABPawn::AABPawn()
 		Mesh->SetSkeletalMesh(SK_CARDBOARD.Object);
 	}
 
-
+	
 	Mesh->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 
-	static ConstructorHelpers::FClassFinder<UAnimInstance>WARRIOR_ANIM(TEXT("/Game/ParagonShinbi/Characters/Heroes/Shinbi/Shinbi_AnimBlueprint.Shinbi_AnimBlueprint_C"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance>WARRIOR_ANIM(TEXT("/Game/ParagonShinbi/Characters/Heroes/Shinbi/ArenaBattleShinbiAnime.ArenaBattleShinbiAnime_C"));
 	if (WARRIOR_ANIM.Succeeded())
 	{
 		Mesh->SetAnimInstanceClass(WARRIOR_ANIM.Class);
 	}
-	
+
 
 
 }
