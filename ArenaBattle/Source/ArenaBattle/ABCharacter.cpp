@@ -34,8 +34,8 @@ AABCharacter::AABCharacter()
 	{
 		GetMesh()->SetAnimInstanceClass(SHINBI_ANIM.Class);
 	}
-
-
+ //조작 방식을 초기화
+	SetControlMode(0);
 }
 
 // Called when the game starts or when spawned
@@ -59,6 +59,10 @@ void AABCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	//sync input 
 	PlayerInputComponent->BindAxis(TEXT("UpDown"), this, &AABCharacter::UpDown);
 	PlayerInputComponent->BindAxis(TEXT("LeftRight"), this, &AABCharacter::LeftRight);
+	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &AABCharacter::LookUp);
+	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &AABCharacter::Turn);
+
+
 }
 
 void AABCharacter::UpDown(float NewAxisValue)
@@ -71,3 +75,27 @@ void AABCharacter::LeftRight(float NewAxisValue)
 	AddMovementInput(GetActorRightVector(), NewAxisValue);
 }
 
+void AABCharacter::LookUp(float NewAxisValue)
+{
+	AddControllerPitchInput(NewAxisValue);
+}
+void AABCharacter::Turn(float NewAxisValue)
+{
+	AddControllerYawInput(NewAxisValue);
+}
+
+void AABCharacter::SetControlMode(int32 ControlMode)
+{
+	if (ControlMode == 0)
+	{
+		
+		SpringArm->TargetArmLength = 450.0f;
+		SpringArm->SetRelativeRotation(FRotator::ZeroRotator);
+		SpringArm->bUsePawnControlRotation = true;
+		SpringArm->bInheritPitch = true;
+		SpringArm->bInheritRoll = true;
+		SpringArm->bInheritYaw = true;
+		SpringArm->bDoCollisionTest = true;
+		bUseControllerRotationYaw = false;
+	}
+}
