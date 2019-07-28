@@ -35,7 +35,12 @@ AABCharacter::AABCharacter()
 		GetMesh()->SetAnimInstanceClass(SHINBI_ANIM.Class);
 	}
  //조작 방식을 초기화
-	SetControlMode(0);
+	SetControlMode(EControlMode::DIABLO);
+
+	//chapter6 - switch mode, 카메라 전환
+	ArmLengthSpeed = 3.0f;
+	ArmRotationSpeed = 10.0f;
+
 }
 
 // Called when the game starts or when spawned
@@ -50,56 +55,196 @@ void AABCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//InterpTo 명령어
+	/*
+		지정한 속력으로 목표 지점까지 진행하되, 목표 지점까지 도달하면 그 값에서 멈추는 기능
+		float value -> FInterpTo
+		vector value -> VInterpTo
+		rotator -> RInterpto
+		모두 FMath 클래스에서 제공한다
+	*/
+	SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, ArmLengthTo, DeltaTime, ArmLengthSpeed);
+
+
+	switch (CurrentControlMode)
+	{
+	case EControlMode::DIABLO:
+		SpringArm->RelativeRotation = \
+			FMath::RInterpTo(SpringArm->RelativeRotation, ArmRotationTo, DeltaTime, ArmRotationSpeed);
+		break;
+	}
+
+	switch (CurrentControlMode)
+	{
+	case EControlMode::DIABLO:
+		if (DirectionToMove.SizeSquared() > 0.0f)
+		{
+			GetController()->SetControlRotation(FRotationMatrix::MakeFromX(DirectionToMove).Rotator());
+			AddMovementInput(DirectionToMove);
+		}
+
+		
+		break;
+	}
+
 }
 
 // Called to bind functionality to input
+// bind input관련 처리는 모두 여기서
 void AABCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	//sync input 
+	//axis input
 	PlayerInputComponent->BindAxis(TEXT("UpDown"), this, &AABCharacter::UpDown);
 	PlayerInputComponent->BindAxis(TEXT("LeftRight"), this, &AABCharacter::LeftRight);
 	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &AABCharacter::LookUp);
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &AABCharacter::Turn);
-
+	
+	
+	//action input
+	PlayerInputComponent->BindAction(TEXT("ViewChange"),EInputEvent::IE_Pressed, this, &AABCharacter::ViewChange);
 
 }
 
 void AABCharacter::UpDown(float NewAxisValue)
 {
-	AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::X), NewAxisValue);
 	
+	switch(CurrentControlMode)
+	{
+	case EControlMode::GTA:
+		AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::X), NewAxisValue);
+		break;
+
+	case EControlMode::DIABLO:
+		DirectionToMove.X = NewAxisValue;
+		break;
+	}
 
 }
 
 void AABCharacter::LeftRight(float NewAxisValue)
 {
-	AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::Y), NewAxisValue);
+	switch (CurrentControlMode)
+	{
+	case EControlMode::GTA:
+		AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::Y), NewAxisValue);
+		break;
+
+	case EControlMode::DIABLO:
+		DirectionToMove.Y = NewAxisValue;
+		break;
+	}
+
 }
 
 void AABCharacter::LookUp(float NewAxisValue)
 {
-	AddControllerPitchInput(NewAxisValue);
-}
-void AABCharacter::Turn(float NewAxisValue)
-{
-	AddControllerYawInput(NewAxisValue);
+	switch (CurrentControlMode)
+	{
+	case EControlMode::GTA:
+		AddControllerPitchInput(NewAxisValue);
+		break;
+	}
+	
 }
 
-void AABCharacter::SetControlMode(int32 ControlMode)
+
+void AABCharacter::Turn(float NewAxisValue)
 {
-	if (ControlMode == 0)
+	switch (CurrentControlMode)
+	{
+	case EControlMode::GTA:
+		AddControllerYawInput(NewAxisValue);
+		break;
+	}
+
+
+}
+
+void AABCharacter::SetControlMode(EControlMode NewControlMode)
+{
+	CurrentControlMode = NewControlMode;
+	
+
+	switch (CurrentControlMode)
+	{
+		/*
+			SpringArm->TargetArmLength = spring arm의 길이를 설정한다
+			SpringArm->SetRelativeRotation(Rotation Vector)
+			=> 카메라의 기울기를 설정한다. x,y,z축이며 각 축을 기준으로 각도를 기울인다.
+				(-45.0,0.0,0.0)이면 x축-45도만큼 움직여서 위에서 내려다보게 된다 
+				(0.0 -45.0 0.0)이면 y축으로 -45도만큼 움직여서 카메라 방향이 옆에서 보게 된다
+				(0.0 0.0 -45.0)이면 z축으로 -45도만큼 움직여서 카메라 방향이 틀어지게 된다
+			SpringArm->bUsePawnControlRotation = pawn과 카메라를 같이 움직이게 할 것인가
+
+			SpringArm->bInheritPitch = true;
+			SpringArm->bInheritRoll = true;
+			SpringArm->bInheritYaw = true; spring arm을 pitch roll yaw 시킬 것인가
+
+
+			SpringArm->bDoCollisionTest = 충돌처리 할 것인가
+			bUseControllerRotationYaw = false;
+
+			GetCharacterMovement()->bOrientRotationToMovement = true;
+			GetCharacterMovement()->bUseControllerDesiredRotation = 회전 움직임을 부드럽게
+			GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
+		*/
+
+	case EControlMode::GTA:
+		
+
+			/*SpringArm->TargetArmLength = 450.0f;
+			SpringArm->SetRelativeRotation(FRotator::ZeroRotator);*/
+			ArmLengthTo = 450.0f;
+			SpringArm->bUsePawnControlRotation = true;
+			SpringArm->bInheritPitch = true;
+			SpringArm->bInheritRoll = true;
+			SpringArm->bInheritYaw = true;
+			SpringArm->bDoCollisionTest = true;
+			bUseControllerRotationYaw = false;
+			GetCharacterMovement()->bOrientRotationToMovement = true;
+			GetCharacterMovement()->bUseControllerDesiredRotation = false;
+			GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
+			break;
+	
+	case EControlMode::DIABLO:
+
+		/*SpringArm->TargetArmLength = 800.0f;
+		SpringArm->SetRelativeRotation(FRotator(-45.0f,0.0f,0.0f));*/
+		ArmLengthTo = 800.0f;
+		ArmRotationTo = FRotator(-45.0f, 0.0f, 0.0f);
+		SpringArm->bUsePawnControlRotation = false;
+		SpringArm->bInheritPitch = false;
+		SpringArm->bInheritRoll = false;
+		SpringArm->bInheritYaw = false;
+		SpringArm->bDoCollisionTest = false;
+		bUseControllerRotationYaw = false;
+		GetCharacterMovement()->bOrientRotationToMovement =false;
+		GetCharacterMovement()->bUseControllerDesiredRotation = true;
+		GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
+		break;
+
+
+	}
+
+}
+
+
+//GTA mode -> Diablo mode
+//Diablo mode-> GTA mode
+void AABCharacter::ViewChange()
+{
+	switch (CurrentControlMode)
 	{
 		
-		SpringArm->TargetArmLength = 450.0f;
-		SpringArm->SetRelativeRotation(FRotator::ZeroRotator);
-		SpringArm->bUsePawnControlRotation = true;
-		SpringArm->bInheritPitch = true;
-		SpringArm->bInheritRoll = true;
-		SpringArm->bInheritYaw = true;
-		SpringArm->bDoCollisionTest = true;
-		bUseControllerRotationYaw = false;
-		GetCharacterMovement()->bOrientRotationToMovement = true;
-		GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
+	case EControlMode::GTA:
+		GetController()->SetControlRotation(GetActorRotation());
+		SetControlMode(EControlMode::DIABLO);
+		break;
+	case EControlMode::DIABLO:
+		GetController()->SetControlRotation(SpringArm->RelativeRotation);
+		SetControlMode(EControlMode::GTA);
+		break;
 	}
 }
