@@ -54,6 +54,9 @@ public:
 
 
 	//chapter5에서 만든것과 동일한 것들이다
+	// 프로퍼티를 에디터에 노출시키는 작업은 전용 매크로 UPROPERTY() 를 사용하면 매우 쉽습니다
+	//VisibleAnywhere		이 프로퍼티는 모든 프로퍼티 창에 보이지만 편집할 수 없음을 나타냅니다.이 지정자는 "Edit" 지정자와 호환되지 않습니다.
+	//EditAnywhere			이 프로퍼티는 아키타입이나 인스턴스 양쪽의 프로퍼티 창에서 편집할 수 있습니다.이 지정자는 어떤 "Visible" 지정자와도 호환되지 않습니다.
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 		USpringArmComponent* SpringArm;
 	UPROPERTY(VisibleAnywhere, Category = Camera)

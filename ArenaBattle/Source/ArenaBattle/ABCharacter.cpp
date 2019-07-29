@@ -6,6 +6,7 @@
 AABCharacter::AABCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// 이 액터가 Tick() 을 매 프레임 호출하도록 설정합니다. 필요치 않은 경우 이 옵션을 끄면 퍼포먼스가 향상됩니다.
 	PrimaryActorTick.bCanEverTick = true;
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
@@ -55,8 +56,9 @@ void AABCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//InterpTo 명령어
+	
 	/*
+		InterpTo 명령어 ; Interpolate(보간하다)
 		지정한 속력으로 목표 지점까지 진행하되, 목표 지점까지 도달하면 그 값에서 멈추는 기능
 		float value -> FInterpTo
 		vector value -> VInterpTo
@@ -65,12 +67,12 @@ void AABCharacter::Tick(float DeltaTime)
 	*/
 	SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, ArmLengthTo, DeltaTime, ArmLengthSpeed);
 
-
+	
 	switch (CurrentControlMode)
 	{
 	case EControlMode::DIABLO:
 		SpringArm->RelativeRotation = \
-			FMath::RInterpTo(SpringArm->RelativeRotation, ArmRotationTo, DeltaTime, ArmRotationSpeed);
+			FMath::RInterpTo(SpringArm->RelativeRotation, ArmRotationTo, DeltaTime, ArmRotationSpeed);//relative 상대적인
 		break;
 	}
 
@@ -79,6 +81,9 @@ void AABCharacter::Tick(float DeltaTime)
 	case EControlMode::DIABLO:
 		if (DirectionToMove.SizeSquared() > 0.0f)
 		{
+			/*	make from (what axis)
+				what axis를 제외한 나머지 축엔 정규좌표가 들어간 체로 완성된다			
+			*/
 			GetController()->SetControlRotation(FRotationMatrix::MakeFromX(DirectionToMove).Rotator());
 			AddMovementInput(DirectionToMove);
 		}
