@@ -45,6 +45,7 @@ protected:
 	float ArmLengthSpeed = 0.0f;
 	float ArmRotationSpeed = 0.0f;
 
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -61,10 +62,12 @@ public:
 		USpringArmComponent* SpringArm;
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 		UCameraComponent* Camera;
+	
 private:
 	void UpDown(float NewAxisValue);
 	void LeftRight(float NewAxisValue);
 	void LookUp(float);
 	void Turn(float);
 	void ViewChange();
+	void Attack();
 };
