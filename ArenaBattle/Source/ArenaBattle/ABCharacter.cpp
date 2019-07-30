@@ -36,11 +36,14 @@ AABCharacter::AABCharacter()
 		GetMesh()->SetAnimInstanceClass(SHINBI_ANIM.Class);
 	}
  //조작 방식을 초기화
-	SetControlMode(EControlMode::DIABLO);
+	SetControlMode(EControlMode::GTA);
 
 	//chapter6 - switch mode, 카메라 전환
 	ArmLengthSpeed = 3.0f;
 	ArmRotationSpeed = 10.0f;
+
+	//chapter7 jump, 부모클래스인 ACharacter에 jump 함수가 이미 구현돼 있다
+	GetCharacterMovement()->JumpZVelocity = 300.0f;
 
 }
 
@@ -109,7 +112,7 @@ void AABCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	
 	//action input
 	PlayerInputComponent->BindAction(TEXT("ViewChange"),EInputEvent::IE_Pressed, this, &AABCharacter::ViewChange);
-
+	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &AABCharacter::Jump);
 }
 
 void AABCharacter::UpDown(float NewAxisValue)
