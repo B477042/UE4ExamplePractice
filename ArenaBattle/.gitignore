@@ -67,7 +67,7 @@
 SourceArt/**/*.png
 SourceArt/**/*.tga
 
-content/
+
 
 # Binary Files
 Binaries/*
