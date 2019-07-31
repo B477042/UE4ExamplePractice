@@ -307,7 +307,7 @@ void AABCharacter::PostInitializeComponents()
 
 	ABAnim->OnMontageEnded.AddDynamic(this, &AABCharacter::OnAttackMontageEnded);
 
-	ABAnim->OnNextAttackCheck.AddLambda([this]()->void {
+	ABAnim->OnNextAttackCheck.AddLambda([this]() -> void {
 		ABLOG(Warning, TEXT("OnNextAttackCheck"));
 		CanNextCombo = false;
 		if (IsComboInputOn)
@@ -316,7 +316,7 @@ void AABCharacter::PostInitializeComponents()
 			ABAnim->JumpToAttackMontageSection(CurrentCombo);
 		}
 
-	})
+	});
 
 }
 
