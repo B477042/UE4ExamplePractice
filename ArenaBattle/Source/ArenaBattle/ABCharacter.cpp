@@ -6,7 +6,7 @@
 // Sets default values
 AABCharacter::AABCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	// 이 액터가 Tick() 을 매 프레임 호출하도록 설정합니다. 필요치 않은 경우 이 옵션을 끄면 퍼포먼스가 향상됩니다.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -20,7 +20,7 @@ AABCharacter::AABCharacter()
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -88.0f), FRotator(0.0f, -90.0f, 0.0f));
 	SpringArm->TargetArmLength = 400.0f;
 	SpringArm->SetRelativeRotation(FRotator(-15.0f, 0.0f, 0.0f));
-	
+
 
 	//경로 주의
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh>SK_SHINBI(TEXT("/Game/ParagonShinbi/Characters/Heroes/Shinbi/Meshes/Shinbi.Shinbi"));
@@ -36,7 +36,7 @@ AABCharacter::AABCharacter()
 	{
 		GetMesh()->SetAnimInstanceClass(SHINBI_ANIM.Class);
 	}
- //조작 방식을 초기화
+	//조작 방식을 초기화
 	SetControlMode(EControlMode::GTA);
 
 	//chapter6 - switch mode, 카메라 전환
@@ -47,6 +47,10 @@ AABCharacter::AABCharacter()
 	GetCharacterMovement()->JumpZVelocity = 300.0f;
 
 	IsAttacking = false;
+
+	//chapter8 combo attack
+	MaxCombo = 4;
+	AttackEndComboState();
 
 }
 
@@ -263,28 +267,79 @@ void AABCharacter::ViewChange()
 
 void AABCharacter::Attack()
 {
-	if (IsAttacking)return;
 
-	ABLOG_S(Warning);
-	auto AnimInstance = Cast<UABAnimInstance>(GetMesh()->GetAnimInstance());
-	if (nullptr == AnimInstance) return;
+	//chapter8 comobo attack Lambda 이전
+	//if (IsAttacking)return;
+	////ABLOG_S(Warning);
+	////auto AnimInstance = Cast<UABAnimInstance>(GetMesh()->GetAnimInstance());
+	////if (nullptr == AnimInstance) return;
+	//ABAnim->PlayAttackMontage();
+	//IsAttacking = true;
 
-	AnimInstance->PlayAttackMontage();
+	//이후
+	if (IsAttacking)
+	{
+		ABCHECK(FMath::IsWithinInclusive<int32>(CurrentCombo, 1, MaxCombo));
+		if (CanNextCombo)
+		{
+			IsComboInputOn = true;
 
-	IsAttacking = true;
+		}
+	}
+
+	else
+	{
+		ABCHECK(CurrentCombo == 0);
+		AttackStartComboState();
+		ABAnim->PlayAttackMontage();
+		ABAnim->JumpToAttackMontageSection(CurrentCombo);
+		IsAttacking = true;
+	}
+
+
 }
 
 void AABCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	auto AnimInstance = Cast<UABAnimInstance>(GetMesh()->GetAnimInstance());
-	ABCHECK(nullptr != AnimInstance);
+	 ABAnim = Cast<UABAnimInstance>(GetMesh()->GetAnimInstance());
+	ABCHECK(nullptr != ABAnim);
 
-	AnimInstance->OnMontageEnded.AddDynamic(this, &AABCharacter::OnAttackMontageEnded);
+	ABAnim->OnMontageEnded.AddDynamic(this, &AABCharacter::OnAttackMontageEnded);
+
+	ABAnim->OnNextAttackCheck.AddLambda([this]()->void {
+		ABLOG(Warning, TEXT("OnNextAttackCheck"));
+		CanNextCombo = false;
+		if (IsComboInputOn)
+		{
+			AttackStartComboState();
+			ABAnim->JumpToAttackMontageSection(CurrentCombo);
+		}
+
+	})
+
 }
 
 void AABCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	ABCHECK(IsAttacking);
+	ABCHECK(CurrentCombo > 0);
 	IsAttacking = false;
+	AttackEndComboState();
+}
+
+
+//chapter8 combo attack
+void AABCharacter::AttackStartComboState()
+{
+	CanNextCombo = true;
+	IsComboInputOn = false;
+	ABCHECK(FMath::IsWithinInclusive<int32>(CurrentCombo, 0, MaxCombo - 1));
+	CurrentCombo = FMath::Clamp<int32>(CurrentCombo + 1, 1, MaxCombo);
+}
+void AABCharacter::AttackEndComboState()
+{
+	IsComboInputOn = false;
+	CanNextCombo = false;
+	CurrentCombo = 0;
 }

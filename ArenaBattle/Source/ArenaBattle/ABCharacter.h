@@ -75,9 +75,29 @@ private:
 
 	UFUNCTION()
 	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+	//chapter 8, combo attack
+	void AttackStartComboState();
+	void AttackEndComboState();
 private:
 	
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		bool IsAttacking;
 
+	//chapter 8, 콤보공격
+	UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Category=Attack,Meta=(AllowPrivateAccess=true))
+		bool CanNextCombo;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		bool IsComboInputOn;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		int32 CurrentCombo;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		int32 MaxCombo;
+	
+	//전방 선언, chapter8
+	//헤더 파일에서 같은 모듈에 있는 다른 헤더 파일을 참조하지 않아도 되므로 상호 참조를 방지함
+	//코드 구조를 관리하기 좀 더 용이해진다
+	UPROPERTY()
+		class UABAnimInstance* ABAnim;
 };
+
