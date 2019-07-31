@@ -20,7 +20,8 @@ UPROPERTY에서 EditAnywhere와 VisibleAnywhere에 대해
 DefaultsOnly는 클래스의 기본값을 담당하는 블루프린트 편집화면에서만 보여짐
 InstanceOnly는 인스턴스의 속성을 에디터 뷰포트에서만 보여진다
 
-- 델리케이트 -
+- 델리케이트 - Delegate : 대표하다, 위임하다
+
 정의 : 특정 객체가 해야 할 로직을 다른 객체가 대신 처리할 수있도록 만드는 보편적인 설계
 A - order -> B
 A -  save my(A) info  -> B
