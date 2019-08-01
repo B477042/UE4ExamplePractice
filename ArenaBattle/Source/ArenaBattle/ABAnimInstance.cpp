@@ -59,7 +59,8 @@ void UABAnimInstance::PlayAttackMontage()
 //chapter8 combo attack broadcast
 void UABAnimInstance::JumpToAttackMontageSection(int32 NewSection)
 {
-
+	ABCHECK(Montage_IsPlaying(AttackMontage));
+	Montage_JumpToSection(GetAttackMontageSectionName(NewSection), AttackMontage);
 }
 void UABAnimInstance::AnimNotify_AttackHitCheck()
 {
@@ -68,10 +69,11 @@ void UABAnimInstance::AnimNotify_AttackHitCheck()
 }
 void UABAnimInstance::AnimNotify_NextAttackCheck()
 {
+	ABLOG_S(Warning);
 	OnNextAttackCheck.Broadcast();
 }
 FName UABAnimInstance::GetAttackMontageSectionName(int32 Section)
 {
 	ABCHECK(FMath::IsWithinInclusive<int32>(Section, 1, 4), NAME_None);
-	return FName(*FString::Printf(TEXT("Attack$d"), Section));
+	return FName(*FString::Printf(TEXT("Attack%d"), Section));
 }
