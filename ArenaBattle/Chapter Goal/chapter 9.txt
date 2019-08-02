@@ -53,4 +53,14 @@
 - PhysicsBody : 물리 시뮬레이션으로 움직이는 컴포넌트 설정
 
 
-/////////
+/////////컬리전의 채널////////
+이미 있는데 왜 만드냐?? => 이미 있는 것으로 충분히 만들 순 있다. 하지만, 
+			게임 기획을 고도화하면 그에 맞게 새로운 콜리전을 추가해야 된다
+
+Object channel ; 영역에 지정하는 콜리전
+ex ) WorldStatic, WorldDynamic, Pawn, PhysicsBody, Vehicle, Destructible
+Trace channel ; 행동에 설정하는 콜리전
+ex) Visibility, Camera
+
+
+

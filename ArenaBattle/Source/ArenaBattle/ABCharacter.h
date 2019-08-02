@@ -79,6 +79,10 @@ private:
 	//chapter 8, combo attack
 	void AttackStartComboState();
 	void AttackEndComboState();
+
+	//chapter 9, make attack! with scane area
+	void AttackCheck();
+
 private:
 	
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
