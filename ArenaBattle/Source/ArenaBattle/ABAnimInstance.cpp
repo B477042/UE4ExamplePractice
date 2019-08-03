@@ -6,6 +6,7 @@ UABAnimInstance::UABAnimInstance()
 {
 	CurrentPawnSpeed = 0.0f;
 	IsInAir = false;
+	IsDead = false;
 
 	static ConstructorHelpers::FObjectFinder<UAnimMontage>ATTACK_MONTAGE(TEXT("/Game/Book/Animations/Shinbi_Skeleton_Montage.Shinbi_Skeleton_Montage"));
 	
@@ -22,7 +23,11 @@ void UABAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	//틱에서 폰에 접근해 폰의 속력 값을 얻기 위한 함수, TryGetPawnOwner()
 	auto Pawn = TryGetPawnOwner();
-	if (::IsValid(Pawn))
+	
+	if (!::IsValid(Pawn))return;
+
+
+	if (!IsDead)
 	{
 		CurrentPawnSpeed = Pawn->GetVelocity().Size();
 		auto Character = Cast<ACharacter>(Pawn);
@@ -48,7 +53,7 @@ void UABAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UABAnimInstance::PlayAttackMontage()
 {
-	
+	ABCHECK(!IsDead);
 		Montage_Play(AttackMontage, 1.0f);
 	
 }
@@ -59,6 +64,7 @@ void UABAnimInstance::PlayAttackMontage()
 //chapter8 combo attack broadcast
 void UABAnimInstance::JumpToAttackMontageSection(int32 NewSection)
 {
+	ABCHECK(!IsDead);
 	ABCHECK(Montage_IsPlaying(AttackMontage));
 	Montage_JumpToSection(GetAttackMontageSectionName(NewSection), AttackMontage);
 }
