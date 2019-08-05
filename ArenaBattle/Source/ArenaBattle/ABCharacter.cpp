@@ -2,6 +2,8 @@
 
 #include "ABCharacter.h"
 #include"ABAnimInstance.h"
+#include"DrawDebugHelpers.h"
+#include"ABWeapon.h"
 
 // Sets default values
 AABCharacter::AABCharacter()
@@ -36,6 +38,23 @@ AABCharacter::AABCharacter()
 	{
 		GetMesh()->SetAnimInstanceClass(SHINBI_ANIM.Class);
 	}
+
+
+	//init weapon socket
+	FName WeaponSocket(TEXT("weapon_l"));
+	if (GetMesh()->DoesSocketExist(WeaponSocket))
+	{
+		Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WEAPON"));
+		static ConstructorHelpers::FObjectFinder<USkeletalMesh>SK_WEAPON(TEXT("/Game/InfinityBladeWeapons/Weapons/Blade/Silly_Weapons/Blade_Bubblewand/SK_Blade_Bubblewand.SK_Blade_Bubblewand"));
+
+		if (SK_WEAPON.Succeeded())
+		{
+			Weapon->SetSkeletalMesh(SK_WEAPON.Object);
+
+		}
+		Weapon->SetupAttachment(GetMesh(), WeaponSocket);
+	}
+
 	//조작 방식을 초기화
 	SetControlMode(EControlMode::GTA);
 
@@ -55,20 +74,9 @@ AABCharacter::AABCharacter()
 	//chapter 9, set capsule component to use ABCharacter preset
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("ABCharacter"));
 
-	//init weapon socket
-	FName WeaponSocket(TEXT("hand_rSocket"));
-	if (GetMesh()->DoesSocketExist(WeaponSocket))
-	{
-		Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WEAPON"));
-		static ConstructorHelpers::FObjectFinder<USkeletalMesh>SK_WEAPON(TEXT("/Game/InfinityBladeWeapons/Weapons/Blade/Silly_Weapons/Blade_Bubblewand/SK_Blade_Bubblewand.SK_Blade_Bubblewand"));
-		
-		if (SK_WEAPON.Succeeded())
-		{
-			Weapon->SetSkeletalMesh(SK_WEAPON.Object);
-
-		}
-		Weapon->SetupAttachment(GetMesh(), WeaponSocket);
-	}
+	//chapter9, debug drawing
+	AttackRange = 200.0f;
+	AttackRadius = 50.0f;
 
 }
 
@@ -77,6 +85,14 @@ void AABCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	//chapter 10 pick up weapons
+	FName WeaponScoket(TEXT("weapon_l"));
+	auto CurWeapon = GetWorld()->SpawnActor<AABWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);
+	if (nullptr != CurWeapon)
+	{
+		CurWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "weapon_l");
+	}
+
 }
 
 // Called every frame
@@ -364,18 +380,16 @@ void AABCharacter::AttackEndComboState()
 	CurrentCombo = 0;
 }
 
+
 //chapter9, make attack
 void AABCharacter::AttackCheck()
 {
-	
-	FHitResult HitResult;
-
+	/*1차 코딩, chapter9
+	FHitResult HitResult;//물리적 추우돌이 탐지된 경우 관련된 정보를 담을 구조체, HitResult
 	FCollisionQueryParams Params(NAME_None, false, this);
-
 	bool bResult = GetWorld()->SweepSingleByChannel(\
 		HitResult, GetActorLocation(), GetActorLocation() + GetActorForwardVector()*200.0f, FQuat::Identity, ECollisionChannel::ECC_GameTraceChannel2,\
 		FCollisionShape::MakeSphere(50.0f),Params);
-
 	if (bResult)
 	{
 		if (HitResult.Actor.IsValid())
@@ -383,4 +397,55 @@ void AABCharacter::AttackCheck()
 			ABLOG(Warning, TEXT("Hit Actor Name : %s"), *HitResult.Actor->GetName());
 		}
 	}
+	*/
+
+	//2차 코딩
+
+	FHitResult HitResult;//물리적 추우돌이 탐지된 경우 관련된 정보를 담을 구조체, HitResult
+
+	FCollisionQueryParams Params(NAME_None, false, this);
+
+	bool bResult = GetWorld()->SweepSingleByChannel(\
+		HitResult, GetActorLocation(), GetActorLocation() + GetActorForwardVector()*AttackRange, FQuat::Identity, ECollisionChannel::ECC_GameTraceChannel2, \
+		FCollisionShape::MakeSphere(AttackRadius), Params);
+
+#if ENABLE_DRAW_DEBUG
+	FVector TraceVec = GetActorForwardVector()*AttackRange;
+	FVector Center = GetActorLocation() + TraceVec * 0.5f;
+	float HalfHeight = AttackRange * 0.5f + AttackRadius;
+	FQuat CapsuleRot = FRotationMatrix::MakeFromZ(TraceVec).ToQuat();
+	FColor DrawColor = bResult ? FColor::Green : FColor::Red;
+	float DebugLifeTime = 5.0f;
+
+	DrawDebugCapsule(GetWorld(), Center, HalfHeight, AttackRadius, CapsuleRot, DrawColor, false, DebugLifeTime);
+#endif
+
+	if (bResult)
+	{
+		if (HitResult.Actor.IsValid())
+		{
+			ABLOG(Warning, TEXT("Hit Actor Name : %s"), *HitResult.Actor->GetName());
+
+			FDamageEvent DamageEvent;
+			HitResult.Actor->TakeDamage(50.0f, DamageEvent, GetController(), this);
+		}
+	}
+
+
+
+}
+//chapter9 damage framework
+float AABCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, \
+	class AController* EventInstigator, AActor* DamageCauser)
+{
+	//먼저 AActor의 TakeDamage를 연산한다
+	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	//그리고 그 값을 로그에 띄워주는 역할을 시킨다
+	ABLOG(Warning, TEXT("Actor : %s took Damage : %f "), *GetName(), FinalDamage);
+	if (FinalDamage > 0.0f)
+	{
+		ABAnim->SetDeadAnim();
+		SetActorEnableCollision(false);
+	}
+	return FinalDamage;
 }

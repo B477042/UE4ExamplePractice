@@ -65,6 +65,12 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 		UCameraComponent* Camera;
 
+
+	//chapter9 damage framework
+//override TakeDamage from AActor.
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, \
+		class AController* EventInstigator, AActor* DamageCauser)override;
+
 	//chapter10 weapon attach
 	UPROPERTY(VisibleAnywhere, Category = Weapon)
 		USkeletalMeshComponent* Weapon;
@@ -106,5 +112,12 @@ private:
 	//코드 구조를 관리하기 좀 더 용이해진다
 	UPROPERTY()
 		class UABAnimInstance* ABAnim;
+
+	//chapter 9, debug drawing
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		float AttackRange;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		float AttackRadius;
+
 };
 
