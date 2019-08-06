@@ -85,13 +85,15 @@ void AABCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	//chapter 10 pick up weapons
-	FName WeaponScoket(TEXT("weapon_l"));
-	auto CurWeapon = GetWorld()->SpawnActor<AABWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);
-	if (nullptr != CurWeapon)
-	{
-		CurWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "weapon_l");
-	}
+	////chapter 10 pick up weapons
+	//FName WeaponScoket(TEXT("weapon_l"));
+	//auto CurWeapon = GetWorld()->SpawnActor<AABWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);
+	//if (nullptr != CurWeapon)
+	//{
+	//	CurWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "weapon_l");
+	//}
+	//had been deleted at the chapter10
+	//cause : update new logic to pick up weapon
 
 }
 
@@ -448,4 +450,26 @@ float AABCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& Da
 		SetActorEnableCollision(false);
 	}
 	return FinalDamage;
+}
+
+
+
+//chapter10 pick up weapon
+
+bool AABCharacter::CanSetWeapon()
+{
+	return (nullptr == CurrentWeapon);
+}
+
+void AABCharacter::SetWeapon(AABWeapon* NewWeapon)
+{
+	ABCHECK(nullptr != NewWeapon && nullptr == CurrentWeapon);
+	FName WeaponSocket("weapon_l");
+	if (nullptr != NewWeapon)
+	{
+		//new weapon을 character mesh에 붙이는데 위치를 WeaponSocket으로 한다
+		NewWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
+		NewWeapon->SetOwner(this);//owner is mine
+		CurrentWeapon = NewWeapon;//change currentWeapon to this new Weapon
+	}
 }

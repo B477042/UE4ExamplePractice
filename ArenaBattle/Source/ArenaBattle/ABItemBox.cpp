@@ -1,6 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ABItemBox.h"
+//chapter10 아이템 줍기
+#include"ABWeapon.h"
+#include"ABCharacter.h"
+
 
 // Sets default values
 AABItemBox::AABItemBox()
@@ -23,6 +27,14 @@ AABItemBox::AABItemBox()
 	}
 	Box->SetRelativeLocation(FVector(0.0f, -3.5f, -30.0f));
 
+	Trigger->SetCollisionProfileName(TEXT("ItemBox"));
+	Box->SetCollisionProfileName(TEXT("NoCollision"));
+
+	//chapter10 아이템 줍기
+	//WeaponItemClass에 정보 저장
+	//아 이렇게 저장하니까 구조가 다 보인다고 하는구나
+	WeaponItemClass = AABWeapon::StaticClass();
+
 }
 
 // Called when the game starts or when spawned
@@ -30,6 +42,37 @@ void AABItemBox::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+//chapter10. create reaction of Box
+void AABItemBox::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	//t this function in Box Components
+	Trigger->OnComponentBeginOverlap.AddDynamic(this, &AABItemBox::OnCharacterOverlap);
+}
+
+//if character has been overlap, will send massege Warning
+void AABItemBox::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep,const FHitResult& SweepResult)
+{
+	ABLOG_S(Warning);
+
+	auto ABCharacter = Cast<AABCharacter>(OtherActor);
+	ABCHECK(nullptr != ABCharacter);
+
+	if (nullptr != ABCharacter && nullptr != WeaponItemClass)
+	{
+		if (ABCharacter->CanSetWeapon())
+		{
+			auto NewWeapon = GetWorld()->SpawnActor<AABWeapon>(WeaponItemClass, FVector::ZeroVector, FRotator::ZeroRotator);
+
+		}
+		else
+		{
+			ABLOG(Warning, TEXT("%s cant equip weapon currently. "), *ABCharacter->GetName());
+		}
+	}
+
 }
 
 // Called every frame

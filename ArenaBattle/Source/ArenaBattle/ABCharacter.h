@@ -55,6 +55,13 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	//chapter 10 
+	//if weapon_l is empty, attach weapon to left hand and set owner to player
+	bool CanSetWeapon();
+	void SetWeapon(class AABWeapon* NewWeapon);
+	UPROPERTY(VisibleAnywhere, Category = Weapon)
+		class AABWeapon* CurrentWeapon;
+
 
 	//chapter5에서 만든것과 동일한 것들이다
 	// 프로퍼티를 에디터에 노출시키는 작업은 전용 매크로 UPROPERTY() 를 사용하면 매우 쉽습니다
@@ -74,6 +81,9 @@ public:
 	//chapter10 weapon attach
 	UPROPERTY(VisibleAnywhere, Category = Weapon)
 		USkeletalMeshComponent* Weapon;
+
+
+
 private:
 	void UpDown(float NewAxisValue);
 	void LeftRight(float NewAxisValue);
