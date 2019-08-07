@@ -93,7 +93,7 @@ void AABItemBox::OnCharacterOverlap(UPrimitiveComponent* OverlappedComp, AActor*
 			Box->SetHiddenInGame(true, true);
 			//step3. turn off collision
 			SetActorEnableCollision(false);
-			//step4. distroy Box
+			//step4. distroy Box.  ParticleSystemComponent-> OnSystemFinished(), delicate
 			Effect->OnSystemFinished.AddDynamic(this, &AABItemBox::OnEffectFinished);
 		}
 		else
