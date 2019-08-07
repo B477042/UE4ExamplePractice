@@ -62,6 +62,11 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Weapon)
 		class AABWeapon* CurrentWeapon;
 
+	//chapter 11
+	//manage state component
+	UPROPERTY(VisibleAnywhere, Category = Stat)
+		class UABCharacterStatComponent* CharacterStat;
+
 
 	//chapter5에서 만든것과 동일한 것들이다
 	// 프로퍼티를 에디터에 노출시키는 작업은 전용 매크로 UPROPERTY() 를 사용하면 매우 쉽습니다

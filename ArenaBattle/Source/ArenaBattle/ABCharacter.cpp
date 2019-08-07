@@ -4,6 +4,7 @@
 #include"ABAnimInstance.h"
 #include"DrawDebugHelpers.h"
 #include"ABWeapon.h"
+#include"ABCharacterStatComponent.h"
 
 // Sets default values
 AABCharacter::AABCharacter()
@@ -11,9 +12,12 @@ AABCharacter::AABCharacter()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	// 이 액터가 Tick() 을 매 프레임 호출하도록 설정합니다. 필요치 않은 경우 이 옵션을 끄면 퍼포먼스가 향상됩니다.
 	PrimaryActorTick.bCanEverTick = true;
-
+	//initialize components
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA"));
+
+	//chapter 11 stat component
+	CharacterStat = CreateDefaultSubobject<UABCharacterStatComponent>(TEXT("CHARACTERSTAT"));
 
 	//Pawn 원형 클래스에 있는 것들을 get함수를 통해 불러와 초기화 시킨다
 	SpringArm->SetupAttachment(GetCapsuleComponent());
@@ -77,6 +81,7 @@ AABCharacter::AABCharacter()
 	//chapter9, debug drawing
 	AttackRange = 200.0f;
 	AttackRadius = 50.0f;
+
 
 }
 
