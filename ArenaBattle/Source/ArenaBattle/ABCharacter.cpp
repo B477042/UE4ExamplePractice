@@ -359,7 +359,15 @@ void AABCharacter::PostInitializeComponents()
 
 	});
 
+	//chapter 11. create damage logic using by StatComponent
+	//first, check "is dead UObject?? if so that, play dead animation and kill that"
 	ABAnim->OnAttackHitCheck.AddUObject(this, &AABCharacter::AttackCheck);
+
+	CharacterStat->OnHPIsZero.AddLambda([this]()->void {
+		ABLOG(Warning, TEXT("OnHPIsZero"));
+		ABAnim->SetDeadAnim();
+		SetActorEnableCollision(false);
+	});
 
 }
 
@@ -389,6 +397,7 @@ void AABCharacter::AttackEndComboState()
 
 
 //chapter9, make attack
+//chapter 11, refine attack logic
 void AABCharacter::AttackCheck()
 {
 	/*1차 코딩, chapter9
@@ -434,7 +443,8 @@ void AABCharacter::AttackCheck()
 			ABLOG(Warning, TEXT("Hit Actor Name : %s"), *HitResult.Actor->GetName());
 
 			FDamageEvent DamageEvent;
-			HitResult.Actor->TakeDamage(50.0f, DamageEvent, GetController(), this);
+			//chapter11 chage damage value. 50.0f(const value) to character's attack value
+			HitResult.Actor->TakeDamage(CharacterStat->GetAttack(), DamageEvent, GetController(), this);
 		}
 	}
 
@@ -442,6 +452,7 @@ void AABCharacter::AttackCheck()
 
 }
 //chapter9 damage framework
+//chapter11 refine damage framework
 float AABCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, \
 	class AController* EventInstigator, AActor* DamageCauser)
 {
@@ -449,11 +460,10 @@ float AABCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& Da
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	//그리고 그 값을 로그에 띄워주는 역할을 시킨다
 	ABLOG(Warning, TEXT("Actor : %s took Damage : %f "), *GetName(), FinalDamage);
-	if (FinalDamage > 0.0f)
-	{
-		ABAnim->SetDeadAnim();
-		SetActorEnableCollision(false);
-	}
+
+	//send calculated Damage to StatComponent
+	CharacterStat->SetDamage(FinalDamage);
+
 	return FinalDamage;
 }
 

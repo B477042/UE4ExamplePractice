@@ -44,9 +44,32 @@ void UABCharacterStatComponent::SetNewLevel(int32 NewLevel)
 	{
 		Level = NewLevel;
 		CurrentHP = CurrentStatData->MaxHP;
+		ABLOG(Warning, TEXT("LEVEL UP!!! now your Level is %d and your HP is %f"), NewLevel, CurrentHP);
 	}
 	else
 	{
 		ABLOG(Error, TEXT("Level (%d) data donest exist"), NewLevel);
 	}
+}
+
+
+//if ABCharacter call TakeDamage Function, this Component must calculate remain HP
+//So we make SetDamage Function and GetAttack to calculate Character's HP
+void UABCharacterStatComponent::SetDamage(float NewDamage)
+{
+	ABCHECK(nullptr != CurrentStatData);
+	//Clamp is template function that compare Value
+	//Input < Min Value ? : Min value : Input>Max ? Max : Input
+	CurrentHP = FMath::Clamp<float>(CurrentHP - NewDamage, 0.0f, CurrentStatData->MaxHP);
+	//if Character is dead
+	if (CurrentHP <= 0.0f)
+	{
+		OnHPIsZero.Broadcast();
+	}
+}
+//send Character's ATK point
+float UABCharacterStatComponent::GetAttack()
+{
+	ABCHECK(nullptr != CurrentStatData, 0.0f);
+	return CurrentStatData->Attack;
 }

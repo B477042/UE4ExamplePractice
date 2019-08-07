@@ -6,6 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "ABCharacterStatComponent.generated.h"
 
+//HP가 0이하가 됐는지 ABCharacter에 알려주기 위한 델리게이트
+DECLARE_MULTICAST_DELEGATE(FOnHPIsZeroDelegate);
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ARENABATTLE_API UABCharacterStatComponent : public UActorComponent
@@ -29,12 +32,19 @@ public:
 
 	//this is only way to control Level
 	void SetNewLevel(int32 NewLevel);
+	//if ABCharacter call TakeDamage Function, this Component must calculate remain HP
+	//So we make SetDamage Function and GetAttack to calculate Character's HP
+	void SetDamage(float NewDamage);
+	float GetAttack();
+
+	FOnHPIsZeroDelegate OnHPIsZero;
+
 private:
 	struct FABCharacterData* CurrentStatData = nullptr;
 	//save Level data
 	UPROPERTY(EditInstanceOnly, Category = Stat, Meta = (AllowPrivateAccess = true))
 		int32 Level;
-	//save current HP
+	//save current HP,Transient 조사
 	UPROPERTY(Transient, VisibleInstanceOnly, Category = Stat, Meta = (AllowPrivateAccess = true))
 		float CurrentHP;
 };
