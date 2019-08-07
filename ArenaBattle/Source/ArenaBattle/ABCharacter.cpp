@@ -40,20 +40,20 @@ AABCharacter::AABCharacter()
 	}
 
 
-	//init weapon socket
-	FName WeaponSocket(TEXT("weapon_l"));
-	if (GetMesh()->DoesSocketExist(WeaponSocket))
-	{
-		Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WEAPON"));
-		static ConstructorHelpers::FObjectFinder<USkeletalMesh>SK_WEAPON(TEXT("/Game/InfinityBladeWeapons/Weapons/Blade/Silly_Weapons/Blade_Bubblewand/SK_Blade_Bubblewand.SK_Blade_Bubblewand"));
+	////init weapon socket, old style
+	//FName WeaponSocket(TEXT("weapon_l"));
+	//if (GetMesh()->DoesSocketExist(WeaponSocket))
+	//{
+	//	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WEAPON"));
+	//	static ConstructorHelpers::FObjectFinder<USkeletalMesh>SK_WEAPON(TEXT("/Game/InfinityBladeWeapons/Weapons/Blade/Silly_Weapons/Blade_Bubblewand/SK_Blade_Bubblewand.SK_Blade_Bubblewand"));
 
-		if (SK_WEAPON.Succeeded())
-		{
-			Weapon->SetSkeletalMesh(SK_WEAPON.Object);
+	//	if (SK_WEAPON.Succeeded())
+	//	{
+	//		Weapon->SetSkeletalMesh(SK_WEAPON.Object);
 
-		}
-		Weapon->SetupAttachment(GetMesh(), WeaponSocket);
-	}
+	//	}
+	//	Weapon->SetupAttachment(GetMesh(), WeaponSocket);
+	//}
 
 	//조작 방식을 초기화
 	SetControlMode(EControlMode::GTA);

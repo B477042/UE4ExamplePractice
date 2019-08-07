@@ -78,9 +78,9 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, \
 		class AController* EventInstigator, AActor* DamageCauser)override;
 
-	//chapter10 weapon attach
-	UPROPERTY(VisibleAnywhere, Category = Weapon)
-		USkeletalMeshComponent* Weapon;
+	////chapter10 weapon attach
+	//UPROPERTY(VisibleAnywhere, Category = Weapon)
+	//	USkeletalMeshComponent* Weapon;
 
 
 
