@@ -43,7 +43,7 @@ void UABCharacterStatComponent::SetNewLevel(int32 NewLevel)
 	if (nullptr != CurrentStatData)
 	{
 		Level = NewLevel;
-		CurrentHP = CurrentStatData->MaxHP;
+		SetHP(CurrentStatData->MaxHP);
 		ABLOG(Warning, TEXT("LEVEL UP!!! now your Level is %d and your HP is %f"), NewLevel, CurrentHP);
 	}
 	else
@@ -60,10 +60,18 @@ void UABCharacterStatComponent::SetDamage(float NewDamage)
 	ABCHECK(nullptr != CurrentStatData);
 	//Clamp is template function that compare Value
 	//Input < Min Value ? : Min value : Input>Max ? Max : Input
-	CurrentHP = FMath::Clamp<float>(CurrentHP - NewDamage, 0.0f, CurrentStatData->MaxHP);
+	SetHP(FMath::Clamp<float>(CurrentHP - NewDamage, 0.0f, CurrentStatData->MaxHP));
+
 	//if Character is dead
-	if (CurrentHP <= 0.0f)
+	
+}
+void UABCharacterStatComponent::SetHP(float NewHP)
+{
+	CurrentHP = NewHP;
+	OnHPChanged.Broadcast();
+	if (CurrentHP <KINDA_SMALL_NUMBER)
 	{
+		CurrentHP = 0.0f;
 		OnHPIsZero.Broadcast();
 	}
 }
@@ -72,4 +80,10 @@ float UABCharacterStatComponent::GetAttack()
 {
 	ABCHECK(nullptr != CurrentStatData, 0.0f);
 	return CurrentStatData->Attack;
+}
+
+float UABCharacterStatComponent::GetHPRatio()
+{
+	ABCHECK(nullptr != CurrentStatData, 0.0f);
+	return (CurrentStatData->MaxHP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / CurrentStatData->MaxHP);
 }

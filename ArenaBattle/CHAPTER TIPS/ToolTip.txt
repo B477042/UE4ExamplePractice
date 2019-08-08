@@ -39,5 +39,8 @@ ex) cout에서 <<
 https://cafe.naver.com/unrealenginekr
 참조
 
+-KINDA_SMALL_NUMBER
+float형. float 값을 0과 비교할 때 미세한 오차 범위 내에 있는지 측정할 때 사용된다
+0.0f대신 쓴다고 보자
 
 

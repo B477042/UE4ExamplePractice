@@ -8,7 +8,8 @@
 
 //HP가 0이하가 됐는지 ABCharacter에 알려주기 위한 델리게이트
 DECLARE_MULTICAST_DELEGATE(FOnHPIsZeroDelegate);
-
+//Stat의 변동 값에 따라 hp bar의 표시를 바꿔줄 델리게이트
+DECLARE_MULTICAST_DELEGATE(FOnHPChangedDelegate);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ARENABATTLE_API UABCharacterStatComponent : public UActorComponent
@@ -35,10 +36,14 @@ public:
 	//if ABCharacter call TakeDamage Function, this Component must calculate remain HP
 	//So we make SetDamage Function and GetAttack to calculate Character's HP
 	void SetDamage(float NewDamage);
+	void SetHP(float NewHP);
+
+
 	float GetAttack();
+	float GetHPRatio();
 
 	FOnHPIsZeroDelegate OnHPIsZero;
-
+	FOnHPChangedDelegate OnHPChanged;
 private:
 	struct FABCharacterData* CurrentStatData = nullptr;
 	//save Level data

@@ -7,6 +7,7 @@
 #include "ABCharacter.generated.h"
 
 
+
 /*
 chapter 5에서 구혔했던 ABPawn을 charater 형태로 만든 작업이다
 
@@ -76,6 +77,11 @@ public:
 		USpringArmComponent* SpringArm;
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 		UCameraComponent* Camera;
+
+	//chapter 11 UI 
+	UPROPERTY(VisibleAnywhere, Category = UI)
+		class UWidgetComponent* HPBarWidget;
+	//WidgetBlueprint'/Game/Book/UI/UI_HPBar.UI_HPBar'
 
 
 	//chapter9 damage framework
