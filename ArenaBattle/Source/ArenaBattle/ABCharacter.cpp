@@ -12,7 +12,7 @@
 AABCharacter::AABCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	// ÀÌ ¾×ÅÍ°¡ Tick() À» ¸Å ÇÁ·¹ÀÓ È£ÃâÇÏµµ·Ï ¼³Á¤ÇÕ´Ï´Ù. ÇÊ¿äÄ¡ ¾ÊÀº °æ¿ì ÀÌ ¿É¼ÇÀ» ²ô¸é ÆÛÆ÷¸Õ½º°¡ Çâ»óµË´Ï´Ù.
+	// ï¿½ï¿½ ï¿½ï¿½ï¿½Í°ï¿½ Tick() ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È£ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½. ï¿½Ê¿ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½É¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ë´Ï´ï¿½.
 	PrimaryActorTick.bCanEverTick = true;
 	//////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////			initialize components		//////////////////////
@@ -29,7 +29,7 @@ AABCharacter::AABCharacter()
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////	Set Default Value of Components		/////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
-	//Pawn ¿øÇü Å¬·¡½º¿¡ ÀÖ´Â °ÍµéÀ» getÇÔ¼ö¸¦ ÅëÇØ ºÒ·¯¿Í ÃÊ±âÈ­ ½ÃÅ²´Ù
+	//Pawn ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½Íµï¿½ï¿½ï¿½ getï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ ï¿½ï¿½Å²ï¿½ï¿½
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	Camera->SetupAttachment(SpringArm);
 	HPBarWidget->SetupAttachment(GetMesh());
@@ -39,7 +39,7 @@ AABCharacter::AABCharacter()
 	SpringArm->SetRelativeRotation(FRotator(-15.0f, 0.0f, 0.0f));
 
 
-	//°æ·Î ÁÖÀÇ
+	//ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh>SK_SHINBI(TEXT("/Game/ParagonShinbi/Characters/Heroes/Shinbi/Meshes/Shinbi.Shinbi"));
 	if (SK_SHINBI.Succeeded())
 	{
@@ -47,7 +47,7 @@ AABCharacter::AABCharacter()
 	}
 
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	//°æ·Î ÁÖÀÇ
+	//ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	static ConstructorHelpers::FClassFinder<UAnimInstance> SHINBI_ANIM(TEXT("/Game/ParagonShinbi/Characters/Heroes/Shinbi/ArenaBattleShinbiAnime.ArenaBattleShinbiAnime_C"));
 	if (SHINBI_ANIM.Succeeded())
 	{
@@ -70,14 +70,14 @@ AABCharacter::AABCharacter()
 	//	Weapon->SetupAttachment(GetMesh(), WeaponSocket);
 	//}
 
-	//Á¶ÀÛ ¹æ½ÄÀ» ÃÊ±âÈ­
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
 	SetControlMode(EControlMode::GTA);
 
-	//chapter6 - switch mode, Ä«¸Þ¶ó ÀüÈ¯
+	//chapter6 - switch mode, Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½È¯
 	ArmLengthSpeed = 3.0f;
 	ArmRotationSpeed = 10.0f;
 
-	//chapter7 jump, ºÎ¸ðÅ¬·¡½ºÀÎ ACharacter¿¡ jump ÇÔ¼ö°¡ ÀÌ¹Ì ±¸ÇöµÅ ÀÖ´Ù
+	//chapter7 jump, ï¿½Î¸ï¿½Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ACharacterï¿½ï¿½ jump ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½
 	GetCharacterMovement()->JumpZVelocity = 300.0f;
 
 	IsAttacking = false;
@@ -95,7 +95,11 @@ AABCharacter::AABCharacter()
 
 	//chapter 11 HPBar UI Setup
 	//Set Hp Bar Location on Character's head position
-	HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 50.0f));
+
+
+
+	HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 180.0f));
+
 	//Set UI bar to face Player's Camera
 	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
 	//Load Blueprint
@@ -134,12 +138,12 @@ void AABCharacter::Tick(float DeltaTime)
 
 	
 	/*
-		InterpTo ¸í·É¾î ; Interpolate(º¸°£ÇÏ´Ù)
-		ÁöÁ¤ÇÑ ¼Ó·ÂÀ¸·Î ¸ñÇ¥ ÁöÁ¡±îÁö ÁøÇàÇÏµÇ, ¸ñÇ¥ ÁöÁ¡±îÁö µµ´ÞÇÏ¸é ±× °ª¿¡¼­ ¸ØÃß´Â ±â´É
+		InterpTo ï¿½ï¿½ï¿½É¾ï¿½ ; Interpolate(ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½)
+		ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ó·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½, ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ß´ï¿½ ï¿½ï¿½ï¿½
 		float value -> FInterpTo
 		vector value -> VInterpTo
 		rotator -> RInterpto
-		¸ðµÎ FMath Å¬·¡½º¿¡¼­ Á¦°øÇÑ´Ù
+		ï¿½ï¿½ï¿½ FMath Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½
 	*/
 	SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, ArmLengthTo, DeltaTime, ArmLengthSpeed);
 
@@ -148,7 +152,7 @@ void AABCharacter::Tick(float DeltaTime)
 	{
 	case EControlMode::DIABLO:
 		SpringArm->RelativeRotation = \
-			FMath::RInterpTo(SpringArm->RelativeRotation, ArmRotationTo, DeltaTime, ArmRotationSpeed);//relative »ó´ëÀûÀÎ
+			FMath::RInterpTo(SpringArm->RelativeRotation, ArmRotationTo, DeltaTime, ArmRotationSpeed);//relative ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		break;
 	}
 
@@ -158,7 +162,7 @@ void AABCharacter::Tick(float DeltaTime)
 		if (DirectionToMove.SizeSquared() > 0.0f)
 		{
 			/*	make from (what axis)
-				what axis¸¦ Á¦¿ÜÇÑ ³ª¸ÓÁö Ãà¿£ Á¤±ÔÁÂÇ¥°¡ µé¾î°£ Ã¼·Î ¿Ï¼ºµÈ´Ù			
+				what axisï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½à¿£ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½î°£ Ã¼ï¿½ï¿½ ï¿½Ï¼ï¿½ï¿½È´ï¿½			
 			*/
 			GetController()->SetControlRotation(FRotationMatrix::MakeFromX(DirectionToMove).Rotator());
 			AddMovementInput(DirectionToMove);
@@ -171,7 +175,7 @@ void AABCharacter::Tick(float DeltaTime)
 }
 
 // Called to bind functionality to input
-// bind input°ü·Ã Ã³¸®´Â ¸ðµÎ ¿©±â¼­
+// bind inputï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â¼­
 void AABCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -252,24 +256,24 @@ void AABCharacter::SetControlMode(EControlMode NewControlMode)
 	switch (CurrentControlMode)
 	{
 		/*
-			SpringArm->TargetArmLength = spring armÀÇ ±æÀÌ¸¦ ¼³Á¤ÇÑ´Ù
+			SpringArm->TargetArmLength = spring armï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½
 			SpringArm->SetRelativeRotation(Rotation Vector)
-			=> Ä«¸Þ¶óÀÇ ±â¿ï±â¸¦ ¼³Á¤ÇÑ´Ù. x,y,zÃàÀÌ¸ç °¢ ÃàÀ» ±âÁØÀ¸·Î °¢µµ¸¦ ±â¿ïÀÎ´Ù.
-				(-45.0,0.0,0.0)ÀÌ¸é xÃà-45µµ¸¸Å­ ¿òÁ÷¿©¼­ À§¿¡¼­ ³»·Á´Ùº¸°Ô µÈ´Ù 
-				(0.0 -45.0 0.0)ÀÌ¸é yÃàÀ¸·Î -45µµ¸¸Å­ ¿òÁ÷¿©¼­ Ä«¸Þ¶ó ¹æÇâÀÌ ¿·¿¡¼­ º¸°Ô µÈ´Ù
-				(0.0 0.0 -45.0)ÀÌ¸é zÃàÀ¸·Î -45µµ¸¸Å­ ¿òÁ÷¿©¼­ Ä«¸Þ¶ó ¹æÇâÀÌ Æ²¾îÁö°Ô µÈ´Ù
-			SpringArm->bUsePawnControlRotation = pawn°ú Ä«¸Þ¶ó¸¦ °°ÀÌ ¿òÁ÷ÀÌ°Ô ÇÒ °ÍÀÎ°¡
+			=> Ä«ï¿½Þ¶ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. x,y,zï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Î´ï¿½.
+				(-45.0,0.0,0.0)ï¿½Ì¸ï¿½ xï¿½ï¿½-45ï¿½ï¿½ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ùºï¿½ï¿½ï¿½ ï¿½È´ï¿½ 
+				(0.0 -45.0 0.0)ï¿½Ì¸ï¿½ yï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -45ï¿½ï¿½ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½È´ï¿½
+				(0.0 0.0 -45.0)ï¿½Ì¸ï¿½ zï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -45ï¿½ï¿½ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Æ²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È´ï¿½
+			SpringArm->bUsePawnControlRotation = pawnï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì°ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Î°ï¿½
 
 			SpringArm->bInheritPitch = true;
 			SpringArm->bInheritRoll = true;
-			SpringArm->bInheritYaw = true; spring armÀ» pitch roll yaw ½ÃÅ³ °ÍÀÎ°¡
+			SpringArm->bInheritYaw = true; spring armï¿½ï¿½ pitch roll yaw ï¿½ï¿½Å³ ï¿½ï¿½ï¿½Î°ï¿½
 
 
-			SpringArm->bDoCollisionTest = Ãæµ¹Ã³¸® ÇÒ °ÍÀÎ°¡
+			SpringArm->bDoCollisionTest = ï¿½æµ¹Ã³ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Î°ï¿½
 			bUseControllerRotationYaw = false;
 
 			GetCharacterMovement()->bOrientRotationToMovement = true;
-			GetCharacterMovement()->bUseControllerDesiredRotation = È¸Àü ¿òÁ÷ÀÓÀ» ºÎµå·´°Ô
+			GetCharacterMovement()->bUseControllerDesiredRotation = È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµå·´ï¿½ï¿½
 			GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
 		*/
 
@@ -334,7 +338,7 @@ void AABCharacter::ViewChange()
 void AABCharacter::Attack()
 {
 
-	//chapter8 comobo attack Lambda ÀÌÀü
+	//chapter8 comobo attack Lambda ï¿½ï¿½ï¿½ï¿½
 	//if (IsAttacking)return;
 	////ABLOG_S(Warning);
 	////auto AnimInstance = Cast<UABAnimInstance>(GetMesh()->GetAnimInstance());
@@ -342,7 +346,7 @@ void AABCharacter::Attack()
 	//ABAnim->PlayAttackMontage();
 	//IsAttacking = true;
 
-	//ÀÌÈÄ
+	//ï¿½ï¿½ï¿½ï¿½
 	if (IsAttacking)
 	{
 		ABCHECK(FMath::IsWithinInclusive<int32>(CurrentCombo, 1, MaxCombo));
@@ -396,19 +400,16 @@ void AABCharacter::PostInitializeComponents()
 		SetActorEnableCollision(false);
 	});
 
-	ABLOG(Warning, TEXT("Before using Cast"));
+
+
 //chapter 11 Link HPBar widget
 	auto CharacterWidget = Cast<UABCharacterWidget>(HPBarWidget->GetUserWidgetObject());
 	if (nullptr != CharacterWidget)
 	{
-		
+
+
 		CharacterWidget->BindCharacterStat(CharacterStat);
 	}
-	else
-	{
-		ABLOG(Warning, TEXT("SIBAL"));
-	}
-
 
 }
 
@@ -441,8 +442,8 @@ void AABCharacter::AttackEndComboState()
 //chapter 11, refine attack logic
 void AABCharacter::AttackCheck()
 {
-	/*1Â÷ ÄÚµù, chapter9
-	FHitResult HitResult;//¹°¸®Àû Ãß¿ìµ¹ÀÌ Å½ÁöµÈ °æ¿ì °ü·ÃµÈ Á¤º¸¸¦ ´ãÀ» ±¸Á¶Ã¼, HitResult
+	/*1ï¿½ï¿½ ï¿½Úµï¿½, chapter9
+	FHitResult HitResult;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß¿ìµ¹ï¿½ï¿½ Å½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼, HitResult
 	FCollisionQueryParams Params(NAME_None, false, this);
 	bool bResult = GetWorld()->SweepSingleByChannel(\
 		HitResult, GetActorLocation(), GetActorLocation() + GetActorForwardVector()*200.0f, FQuat::Identity, ECollisionChannel::ECC_GameTraceChannel2,\
@@ -456,9 +457,9 @@ void AABCharacter::AttackCheck()
 	}
 	*/
 
-	//2Â÷ ÄÚµù
+	//2ï¿½ï¿½ ï¿½Úµï¿½
 
-	FHitResult HitResult;//¹°¸®Àû Ãß¿ìµ¹ÀÌ Å½ÁöµÈ °æ¿ì °ü·ÃµÈ Á¤º¸¸¦ ´ãÀ» ±¸Á¶Ã¼, HitResult
+	FHitResult HitResult;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß¿ìµ¹ï¿½ï¿½ Å½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼, HitResult
 
 	FCollisionQueryParams Params(NAME_None, false, this);
 
@@ -497,9 +498,9 @@ void AABCharacter::AttackCheck()
 float AABCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, \
 	class AController* EventInstigator, AActor* DamageCauser)
 {
-	//¸ÕÀú AActorÀÇ TakeDamage¸¦ ¿¬»êÇÑ´Ù
+	//ï¿½ï¿½ï¿½ï¿½ AActorï¿½ï¿½ TakeDamageï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	//±×¸®°í ±× °ªÀ» ·Î±×¿¡ ¶ç¿öÁÖ´Â ¿ªÇÒÀ» ½ÃÅ²´Ù
+	//ï¿½×¸ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Î±×¿ï¿½ ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å²ï¿½ï¿½
 	ABLOG(Warning, TEXT("Actor : %s took Damage : %f "), *GetName(), FinalDamage);
 
 	//send calculated Damage to StatComponent
@@ -523,7 +524,7 @@ void AABCharacter::SetWeapon(AABWeapon* NewWeapon)
 	FName WeaponSocket("weapon_l");
 	if (nullptr != NewWeapon)
 	{
-		//new weaponÀ» character mesh¿¡ ºÙÀÌ´Âµ¥ À§Ä¡¸¦ WeaponSocketÀ¸·Î ÇÑ´Ù
+		//new weaponï¿½ï¿½ character meshï¿½ï¿½ ï¿½ï¿½ï¿½Ì´Âµï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ WeaponSocketï¿½ï¿½ï¿½ï¿½ ï¿½Ñ´ï¿½
 		NewWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
 		NewWeapon->SetOwner(this);//owner is mine
 		CurrentWeapon = NewWeapon;//change currentWeapon to this new Weapon

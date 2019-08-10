@@ -84,7 +84,9 @@ float UABCharacterStatComponent::GetAttack()
 
 float UABCharacterStatComponent::GetHPRatio()
 {
+
 	ABLOG(Warning, TEXT("Call HP Ratio"));
+
 	ABCHECK(nullptr != CurrentStatData, 0.0f);
 	return (CurrentStatData->MaxHP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / CurrentStatData->MaxHP);
 }
