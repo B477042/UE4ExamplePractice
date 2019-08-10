@@ -8,16 +8,16 @@ void UABCharacterWidget::BindCharacterStat(UABCharacterStatComponent *NewCharact
 {
 	
 	ABCHECK(nullptr != NewCharacterStat);
-	
+	ABLOG(Warning, TEXT("In the Bind Character Stat"));
 
 	CurrentCharacterStat = NewCharacterStat;
-	/*NewCharacterStat->OnHPChanged.AddLambda([this]()->void {
+	NewCharacterStat->OnHPChanged.AddLambda([this]()->void {
 		
 		if (CurrentCharacterStat.IsValid())
 		{
 			ABLOG(Warning, TEXT("Your HPRatio : %f"), CurrentCharacterStat->GetHPRatio());
 		}
-	});*/
+	});
 	NewCharacterStat->OnHPChanged.AddUObject(this, &UABCharacterWidget::UpdateHPWidget);
 
 }
