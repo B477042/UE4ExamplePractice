@@ -5,6 +5,8 @@
 #include"DrawDebugHelpers.h"
 #include"ABWeapon.h"
 #include"ABCharacterStatComponent.h"
+#include"Components/WidgetComponent.h"//chapter 11 UI widget
+#include"ABCharacterWidget.h"
 
 // Sets default values
 AABCharacter::AABCharacter()
@@ -12,16 +14,25 @@ AABCharacter::AABCharacter()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	// 이 액터가 Tick() 을 매 프레임 호출하도록 설정합니다. 필요치 않은 경우 이 옵션을 끄면 퍼포먼스가 향상됩니다.
 	PrimaryActorTick.bCanEverTick = true;
-	//initialize components
+	//////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////			initialize components		//////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA"));
 
 	//chapter 11 stat component
 	CharacterStat = CreateDefaultSubobject<UABCharacterStatComponent>(TEXT("CHARACTERSTAT"));
+	//chapter 11 UI wideget
+	HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBARWIDGET"));
 
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////	Set Default Value of Components		/////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Pawn 원형 클래스에 있는 것들을 get함수를 통해 불러와 초기화 시킨다
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	Camera->SetupAttachment(SpringArm);
+	HPBarWidget->SetupAttachment(GetMesh());
 
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -88.0f), FRotator(0.0f, -90.0f, 0.0f));
 	SpringArm->TargetArmLength = 400.0f;
@@ -81,6 +92,20 @@ AABCharacter::AABCharacter()
 	//chapter9, debug drawing
 	AttackRange = 200.0f;
 	AttackRadius = 50.0f;
+
+	//chapter 11 HPBar UI Setup
+	//Set Hp Bar Location on Character's head position
+	HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 50.0f));
+	//Set UI bar to face Player's Camera
+	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	//Load Blueprint
+	static ConstructorHelpers::FClassFinder<UUserWidget>UI_HUD(TEXT("/Game/Book/UI/UI_HPBar.UI_HPBar_C"));
+
+	if (UI_HUD.Succeeded())
+	{
+		HPBarWidget->SetWidgetClass(UI_HUD.Class);
+		HPBarWidget->SetDrawSize(FVector2D(150.0f, 50.0f));
+	}
 
 
 }
@@ -358,6 +383,8 @@ void AABCharacter::PostInitializeComponents()
 		}
 
 	});
+	
+	
 
 	//chapter 11. create damage logic using by StatComponent
 	//first, check "is dead UObject?? if so that, play dead animation and kill that"
@@ -368,6 +395,20 @@ void AABCharacter::PostInitializeComponents()
 		ABAnim->SetDeadAnim();
 		SetActorEnableCollision(false);
 	});
+
+	ABLOG(Warning, TEXT("Before using Cast"));
+//chapter 11 Link HPBar widget
+	auto CharacterWidget = Cast<UABCharacterWidget>(HPBarWidget->GetUserWidgetObject());
+	if (nullptr != CharacterWidget)
+	{
+		
+		CharacterWidget->BindCharacterStat(CharacterStat);
+	}
+	else
+	{
+		ABLOG(Warning, TEXT("SIBAL"));
+	}
+
 
 }
 

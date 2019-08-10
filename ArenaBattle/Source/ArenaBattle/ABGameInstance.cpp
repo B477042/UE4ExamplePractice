@@ -10,12 +10,14 @@ UABGameInstance::UABGameInstance ()
 	ABCHECK(DT_ABCHARACTER.Succeeded());
 	ABCharacterTable = DT_ABCHARACTER.Object;
 	//compile error
-	//ABCHECK( ABCharacterTable->RowMap.Num() > 0);
+	//ABCHECK( ABCharacterTable->RowMap.Num( ) > 0);
 }
 
 void UABGameInstance::Init()
 {
 	Super::Init();
+	//notice! erase when debug complete
+	ABLOG(Warning, TEXT("Drop of Level 20 ABcharcter : %d"), GetABCharacterData(20)->DropExp);
 }
 
 FABCharacterData* UABGameInstance::GetABCharacterData(int32 Level)
