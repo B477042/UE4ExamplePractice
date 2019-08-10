@@ -95,7 +95,7 @@ AABCharacter::AABCharacter()
 
 	//chapter 11 HPBar UI Setup
 	//Set Hp Bar Location on Character's head position
-	HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 50.0f));
+	HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 180.0f));
 	//Set UI bar to face Player's Camera
 	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
 	//Load Blueprint
@@ -115,6 +115,19 @@ void AABCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	//chapter 11 Link HPBar widget
+
+	//since 4.21 the grammer has been changed. all of UI Widget must write down at the BeginPlay
+
+	auto CharacterWidget = Cast<UABCharacterWidget>(HPBarWidget->GetUserWidgetObject());
+	if (nullptr != CharacterWidget)
+	{
+
+		CharacterWidget->BindCharacterStat(CharacterStat);
+	}
+	
+
+
 	////chapter 10 pick up weapons
 	//FName WeaponScoket(TEXT("weapon_l"));
 	//auto CurWeapon = GetWorld()->SpawnActor<AABWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);
@@ -396,19 +409,11 @@ void AABCharacter::PostInitializeComponents()
 		SetActorEnableCollision(false);
 	});
 
-	ABLOG(Warning, TEXT("Before using Cast"));
-//chapter 11 Link HPBar widget
-	auto CharacterWidget = Cast<UABCharacterWidget>(HPBarWidget->GetUserWidgetObject());
-	if (nullptr != CharacterWidget)
-	{
-		
-		CharacterWidget->BindCharacterStat(CharacterStat);
-	}
-	else
-	{
-		ABLOG(Warning, TEXT("SIBAL"));
-	}
+	
 
+
+	//since 4.21 the grammer has been changed. all of UI Widget must write down at the BeginPlay
+	
 
 }
 
