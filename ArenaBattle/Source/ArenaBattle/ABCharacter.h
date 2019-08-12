@@ -31,9 +31,10 @@ protected:
 	
 
 	//game mode enum class
+	//chapter12 add NPC Mode : slower than anyother modes to Player can escape from enermy 
 	enum class EControlMode
 	{
-		GTA, DIABLO
+		GTA, DIABLO, NPC
 	};
 
 	void SetControlMode(EControlMode);
@@ -93,6 +94,8 @@ public:
 	//UPROPERTY(VisibleAnywhere, Category = Weapon)
 	//	USkeletalMeshComponent* Weapon;
 
+	//chapter12 make NPC mode
+	virtual void PossessedBy(AController* NewController)override;
 
 
 private:

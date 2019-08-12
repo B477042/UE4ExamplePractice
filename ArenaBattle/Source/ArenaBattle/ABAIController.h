@@ -20,7 +20,7 @@ public:
 
 	static const FName HomePosKey;
 	static const FName PatrolPosKey;
-
+	static const FName TargetKey;
 private:
 	//BT file
 	UPROPERTY()

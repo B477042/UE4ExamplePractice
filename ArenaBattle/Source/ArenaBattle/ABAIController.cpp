@@ -7,7 +7,7 @@
 
 const FName AABAIController::HomePosKey(TEXT("HomePos"));
 const FName AABAIController::PatrolPosKey(TEXT("PatrolPos"));
-
+const FName AABAIController::TargetKey(TEXT("Target"));
 AABAIController::AABAIController()
 {
 	static ConstructorHelpers::FObjectFinder<UBlackboardData>BBObject(TEXT("/Game/Book/AI/BB_ABCharacter.BB_ABCharacter"));
