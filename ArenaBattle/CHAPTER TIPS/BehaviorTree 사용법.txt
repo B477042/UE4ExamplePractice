@@ -1,0 +1,9 @@
+Behavior Tree의 태스크를 수행할 때 ExecuteTask라는 멤버 함수를 실행한다
+
+이 함수는 다음 셋 중 하나의 결과(값)를 반환한다
+
+1. Aborted : 태스크 실행 중에 중단 -> 실패!
+2. Failed : 태스크를 실행 했지만 실패
+3. Succeeded : 성공
+4. InProgress : 태스크를 계속 수행중, 결과는 나중에 알려준다
+

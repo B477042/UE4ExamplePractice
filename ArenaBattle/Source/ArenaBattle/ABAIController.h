@@ -15,11 +15,17 @@ class ARENABATTLE_API AABAIController : public AAIController
 	GENERATED_BODY()
 public:
 	AABAIController();
-	virtual void Possess(APawn* NewPawn);
-	virtual void UnPossess();
-private:
-	void OnRepeatTimer();
+	virtual void Possess(APawn* NewPawn)override;
 
-	FTimerHandle RepeatTimerHandle;
-	float RepeatInterval;
+
+	static const FName HomePosKey;
+	static const FName PatrolPosKey;
+
+private:
+	//BT file
+	UPROPERTY()
+		class UBehaviorTree* BTAsset;
+	//BB file
+	UPROPERTY()
+		class UBlackboardData* BBAsset;
 };

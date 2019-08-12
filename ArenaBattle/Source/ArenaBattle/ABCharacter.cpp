@@ -7,6 +7,7 @@
 #include"ABCharacterStatComponent.h"
 #include"Components/WidgetComponent.h"//chapter 11 UI widget
 #include"ABCharacterWidget.h"
+#include"ABAIController.h"
 
 // Sets default values
 AABCharacter::AABCharacter()
@@ -107,7 +108,10 @@ AABCharacter::AABCharacter()
 		HPBarWidget->SetDrawSize(FVector2D(150.0f, 50.0f));
 	}
 
-
+	//chapter 12 AI
+	//AIControllerClass is Pawn class member
+	AIControllerClass = AABAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 // Called when the game starts or when spawned
