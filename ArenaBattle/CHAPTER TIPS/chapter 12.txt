@@ -1,0 +1,26 @@
+﻿//////////////////////////////////////////////////////////
+///////////	목표	////////////////////////
+////////////////////////////////////////////////////////
+
+Behavior Tree를 활용하여 AI를 제작한다.
+만들어진 AI는 스스로 정찰하며, 플레이어를 쫓아와 공격한다
+
+제공 : AIController Component
+
+
+Step 1) ABAIController 클래스를 만들고 ABCharacter의 AIControllerClass를 AABAIController로 속성을 변환 시킨다.
+	AI 생성 옵션은 PlacInWorldOrSpawned로 설정한다
+
+Step 2) 앞으로 레벨에 배치 되거나 만들어지는 ABCharacter는 ABAIController의 지배를 받는다.
+	월드에 배치된 Character를 선택해서 Pawn 속성에 보면 ABAIController가 빙의되 있다
+
+Step 3) AI에 Player를 따라다니는 내용을 넣는다. 이를 위해선 Navigation Mesh 기반의 길찾기 시스템이 필요하다.
+	스스로 움직이기 위해선 Navigation Mesh가 필요하다
+
+Step 4) 배치가 끝났다면 AIController에 player Pawn까지 목적지를 알려주고 3초마다 이동명령을 내리는 코드를 타이머를 이용해 만든다
+
+Step 5) 이동 가능한 목적지를 랜덤으로 가져오는 GetRandomPointInNavigableRadius
+	목적지로 폰을 이동시키는  SimpleMoveToLocation
+
+Step6) 구동이 확인 되면 Behavior Tree를 제작한다
+
