@@ -7,6 +7,8 @@
 #include "ABCharacter.generated.h"
 
 
+//chapter12 make Delegate to Notify attack had been ended
+DECLARE_MULTICAST_DELEGATE(FOnAttackEndDelegate);
 
 /*
 chapter 5에서 구혔했던 ABPawn을 charater 형태로 만든 작업이다
@@ -96,7 +98,11 @@ public:
 
 	//chapter12 make NPC mode
 	virtual void PossessedBy(AController* NewController)override;
-
+	
+	//chapter12 make AI can Attack
+	//Attack moved priavte to public
+	void Attack();
+	FOnAttackEndDelegate OnAttackEnd;
 
 private:
 	void UpDown(float NewAxisValue);
@@ -104,7 +110,7 @@ private:
 	void LookUp(float);
 	void Turn(float);
 	void ViewChange();
-	void Attack();
+	
 
 	UFUNCTION()
 	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);

@@ -437,6 +437,8 @@ void AABCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted
 	ABCHECK(CurrentCombo > 0);
 	IsAttacking = false;
 	AttackEndComboState();
+	//chapter12 add notify delegate
+	OnAttackEnd.Broadcast();
 }
 
 
