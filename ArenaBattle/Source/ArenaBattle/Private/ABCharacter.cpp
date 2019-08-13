@@ -8,6 +8,7 @@
 #include"Components/WidgetComponent.h"//chapter 11 UI widget
 #include"ABCharacterWidget.h"
 #include"ABAIController.h"
+#include"ABCharacterSetting.h"
 
 // Sets default values
 AABCharacter::AABCharacter()
@@ -112,6 +113,13 @@ AABCharacter::AABCharacter()
 	//AIControllerClass is Pawn class member
 	AIControllerClass = AABAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	//chapter13 Project Setting using INI file. check its succeedd
+	auto DefaultSetting = GetDefault<UABCharacterSetting>();
+	if (DefaultSetting->CharacterAssets!=nullptr)
+	{
+		auto CharacterAsset = DefaultSetting->CharacterAssets;
+		ABLOG(Warning, TEXT("Character Asset : %s "), *CharacterAsset.ToString());
+	}
 }
 
 // Called when the game starts or when spawned

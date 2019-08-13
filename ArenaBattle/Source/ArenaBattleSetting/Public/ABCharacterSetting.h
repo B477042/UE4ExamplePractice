@@ -20,6 +20,6 @@ public:
 	UABCharacterSetting();
 	UPROPERTY(config)
 		FSoftObjectPath CharacterAssets;
-	UPROPERTY(config)
-
+	/*UPROPERTY(config)
+*/
 };
