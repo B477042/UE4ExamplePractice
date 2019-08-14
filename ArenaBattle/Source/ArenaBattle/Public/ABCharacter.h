@@ -122,6 +122,10 @@ private:
 	//chapter 9, make attack! with scane area
 	void AttackCheck();
 
+	//chapter13 use INI file to initialize by  StreamablHandl
+	//https://docs.unrealengine.com/ko/Programming/Assets/AsyncLoading/index.html
+	void OnAssetLoadCompleted();
+
 private:
 	
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
@@ -149,5 +153,10 @@ private:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		float AttackRadius;
 
+	//chapter13 use INI file to initialize by  StreamablHandl
+	//https://docs.unrealengine.com/ko/Programming/Assets/AsyncLoading/index.html
+	FSoftObjectPath CharacterAssetToLoad = FSoftObjectPath(nullptr);
+	TSharedPtr<struct FStreamableHandle> AssetStreamingHandle;
+	
 };
 

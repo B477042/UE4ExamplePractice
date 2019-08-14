@@ -9,6 +9,7 @@
 #include"ABCharacterWidget.h"
 #include"ABAIController.h"
 #include"ABCharacterSetting.h"
+#include"ABGameInstance.h"
 
 // Sets default values
 AABCharacter::AABCharacter()
@@ -115,11 +116,17 @@ AABCharacter::AABCharacter()
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	//chapter13 Project Setting using INI file. check its succeedd
 	auto DefaultSetting = GetDefault<UABCharacterSetting>();
-	if (DefaultSetting->CharacterAssets!=nullptr)
-	{
-		auto CharacterAsset = DefaultSetting->CharacterAssets;
-		ABLOG(Warning, TEXT("Character Asset : %s "), *CharacterAsset.ToString());
-	}
+
+
+	
+	for(auto CharacterAssets : DefaultSetting->CharacterAssets)
+		ABLOG(Warning, TEXT("Character Assets : %s "), *CharacterAssets.ToString());
+	
+	//
+	//for(	auto CharacterAssets : DefaultSetting->CharacterBlueprints)
+	//	ABLOG(Warning, TEXT("Character Blueprints: %s "), *CharacterAssets.ToString());
+	//
+
 }
 
 // Called when the game starts or when spawned
@@ -150,6 +157,22 @@ void AABCharacter::BeginPlay()
 	//had been deleted at the chapter10
 	//cause : update new logic to pick up weapon
 
+
+	//chapter13 use INI file to initialize by  StreamablHandl
+	//If enermy is AI
+	//https://docs.unrealengine.com/ko/Programming/Assets/AsyncLoading/index.html
+	if (!IsPlayerControlled())
+	{
+		auto DefaultSetting = GetDefault<UABCharacterSetting>();
+		CharacterAssetToLoad = DefaultSetting->CharacterAssets[0];//only one asset in the ini file list. shinbi
+		auto ABGameInstance = Cast<UABGameInstance>(GetGameInstance());
+		if (nullptr != ABGameInstance)
+		{
+			AssetStreamingHandle = ABGameInstance->StreamableManager.RequestAsyncLoad(CharacterAssetToLoad, FStreamableDelegate::CreateUObject(this, &AABCharacter::OnAssetLoadCompleted));
+			ABLOG(Warning, TEXT("Streamalbe Manager Succeeeded"));
+		}
+
+	}
 }
 
 // Called every frame
@@ -573,5 +596,17 @@ void AABCharacter::PossessedBy(AController* NewController)
 	{
 		SetControlMode(EControlMode::NPC);
 		GetCharacterMovement()->MaxWalkSpeed = 300.0f;
+	}
+}
+
+//chapter13 use INI file to initialize by  StreamablHandl
+	//https://docs.unrealengine.com/ko/Programming/Assets/AsyncLoading/index.html
+void AABCharacter::OnAssetLoadCompleted()
+{
+	AssetStreamingHandle->ReleaseHandle();
+	TSoftObjectPtr<USkeletalMesh>LoadedAssetPath(CharacterAssetToLoad);
+	if (LoadedAssetPath.IsValid())
+	{
+		GetMesh()->SetSkeletalMesh(LoadedAssetPath.Get());
 	}
 }

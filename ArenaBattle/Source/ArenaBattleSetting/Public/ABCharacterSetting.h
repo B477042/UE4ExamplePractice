@@ -12,14 +12,14 @@
  */
 //To Use INI File, add 'config' and file name
 //in this case, Use  ArenaBattle.ini 
-UCLASS(config=ArenaBattle)
+UCLASS(Config=ArenaBattle,Blueprintable,BlueprintType)
 class ARENABATTLESETTING_API UABCharacterSetting : public UObject
 {
 	GENERATED_BODY()
 public:
 	UABCharacterSetting();
-	UPROPERTY(config)
-		FSoftObjectPath CharacterAssets;
-	/*UPROPERTY(config)
-*/
+	UPROPERTY(Config)
+		TArray<FSoftObjectPath> CharacterAssets;
+	//UPROPERTY(Config,BlueprintReadOnly)
+	//	TArray<FSoftObjectPath> CharacterBlueprints;
 };
