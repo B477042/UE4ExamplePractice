@@ -418,6 +418,8 @@ void AABCharacter::Attack()
 		ABAnim->PlayAttackMontage();
 		ABAnim->JumpToAttackMontageSection(CurrentCombo);
 		IsAttacking = true;
+		//CustomFunction
+		SetSpeedAttack(IsAttacking);
 	}
 
 
@@ -468,6 +470,9 @@ void AABCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted
 	ABCHECK(CurrentCombo > 0);
 	IsAttacking = false;
 	AttackEndComboState();
+
+
+
 	//chapter12 add notify delegate
 	OnAttackEnd.Broadcast();
 }
@@ -481,8 +486,12 @@ void AABCharacter::AttackStartComboState()
 	ABCHECK(FMath::IsWithinInclusive<int32>(CurrentCombo, 0, MaxCombo - 1));
 	CurrentCombo = FMath::Clamp<int32>(CurrentCombo + 1, 1, MaxCombo);
 }
+
 void AABCharacter::AttackEndComboState()
 {
+	//CustumFunction
+	SetSpeedNoraml(IsAttacking);
+
 	IsComboInputOn = false;
 	CanNextCombo = false;
 	CurrentCombo = 0;
@@ -608,5 +617,48 @@ void AABCharacter::OnAssetLoadCompleted()
 	if (LoadedAssetPath.IsValid())
 	{
 		GetMesh()->SetSkeletalMesh(LoadedAssetPath.Get());
+	}
+}
+
+
+
+
+
+
+//Custom Function. input Type IsAttacking
+//Set Slowly Speed. input boolearn value is true, if Activate this Function
+void AABCharacter::SetSpeedAttack(bool bResult)
+{
+	//if Character is not Attacking mode. return
+	if (!bResult) return;
+	
+	switch (CurrentControlMode)
+	{
+	case EControlMode::GTA:
+		GetCharacterMovement()->MaxWalkSpeed = 0;
+			break;
+	case EControlMode::DIABLO:
+		GetCharacterMovement()->MaxWalkSpeed = 0;
+			break;
+	case EControlMode::NPC:
+		GetCharacterMovement()->MaxWalkSpeed = 0;
+			break;
+	}
+}
+void AABCharacter::SetSpeedNoraml(bool bResult)
+{
+	if (bResult) return;
+
+	switch (CurrentControlMode)
+	{
+	case EControlMode::GTA:
+		GetCharacterMovement()->MaxWalkSpeed = 10;
+		break;
+	case EControlMode::DIABLO:
+		GetCharacterMovement()->MaxWalkSpeed = 600;
+		break;
+	case EControlMode::NPC:
+		GetCharacterMovement()->MaxWalkSpeed = 300;
+		break;
 	}
 }

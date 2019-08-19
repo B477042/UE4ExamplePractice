@@ -126,6 +126,7 @@ private:
 	//https://docs.unrealengine.com/ko/Programming/Assets/AsyncLoading/index.html
 	void OnAssetLoadCompleted();
 
+	//UPROPERTY Section
 private:
 	
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
@@ -157,6 +158,14 @@ private:
 	//https://docs.unrealengine.com/ko/Programming/Assets/AsyncLoading/index.html
 	FSoftObjectPath CharacterAssetToLoad = FSoftObjectPath(nullptr);
 	TSharedPtr<struct FStreamableHandle> AssetStreamingHandle;
+	
+	//My Custom Function Section
+	public:
+
+	//My Custom Function Section
+	private:
+		void SetSpeedAttack(bool bResult);
+		void SetSpeedNoraml(bool bResult);
 	
 };
 
