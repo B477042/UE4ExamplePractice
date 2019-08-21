@@ -409,6 +409,7 @@ void AABCharacter::Attack()
 			IsComboInputOn = true;
 
 		}
+		
 	}
 
 	else
@@ -418,10 +419,12 @@ void AABCharacter::Attack()
 		ABAnim->PlayAttackMontage();
 		ABAnim->JumpToAttackMontageSection(CurrentCombo);
 		IsAttacking = true;
-		//CustomFunction
-		SetSpeedAttack(IsAttacking);
+
 	}
 
+	////CustomFunction
+	//SetSpeedAttack(IsAttacking);
+	//SetSpeedNoraml(IsAttacking);
 
 }
 
@@ -489,8 +492,7 @@ void AABCharacter::AttackStartComboState()
 
 void AABCharacter::AttackEndComboState()
 {
-	//CustumFunction
-	SetSpeedNoraml(IsAttacking);
+	
 
 	IsComboInputOn = false;
 	CanNextCombo = false;
@@ -625,40 +627,40 @@ void AABCharacter::OnAssetLoadCompleted()
 
 
 
-//Custom Function. input Type IsAttacking
-//Set Slowly Speed. input boolearn value is true, if Activate this Function
-void AABCharacter::SetSpeedAttack(bool bResult)
-{
-	//if Character is not Attacking mode. return
-	if (!bResult) return;
-	
-	switch (CurrentControlMode)
-	{
-	case EControlMode::GTA:
-		GetCharacterMovement()->MaxWalkSpeed = 0;
-			break;
-	case EControlMode::DIABLO:
-		GetCharacterMovement()->MaxWalkSpeed = 0;
-			break;
-	case EControlMode::NPC:
-		GetCharacterMovement()->MaxWalkSpeed = 0;
-			break;
-	}
-}
-void AABCharacter::SetSpeedNoraml(bool bResult)
-{
-	if (bResult) return;
-
-	switch (CurrentControlMode)
-	{
-	case EControlMode::GTA:
-		GetCharacterMovement()->MaxWalkSpeed = 10;
-		break;
-	case EControlMode::DIABLO:
-		GetCharacterMovement()->MaxWalkSpeed = 600;
-		break;
-	case EControlMode::NPC:
-		GetCharacterMovement()->MaxWalkSpeed = 300;
-		break;
-	}
-}
+////Custom Function. input Type IsAttacking
+////Set Slowly Speed. input boolearn value is true, if Activate this Function
+//void AABCharacter::SetSpeedAttack(bool bResult)
+//{
+//	//if Character is not Attacking mode. return
+//	if (!bResult) return;
+//	
+//	switch (CurrentControlMode)
+//	{
+//	case EControlMode::GTA:
+//		GetCharacterMovement()->MaxWalkSpeed = 30;
+//			break;
+//	case EControlMode::DIABLO:
+//		GetCharacterMovement()->MaxWalkSpeed = 30;
+//			break;
+//	case EControlMode::NPC:
+//		GetCharacterMovement()->MaxWalkSpeed = 30;
+//			break;
+//	}
+//}
+//void AABCharacter::SetSpeedNoraml(bool bResult)
+//{
+//	if (bResult) return;
+//
+//	switch (CurrentControlMode)
+//	{
+//	case EControlMode::GTA:
+//		GetCharacterMovement()->MaxWalkSpeed = 600;
+//		break;
+//	case EControlMode::DIABLO:
+//		GetCharacterMovement()->MaxWalkSpeed = 600;
+//		break;
+//	case EControlMode::NPC:
+//		GetCharacterMovement()->MaxWalkSpeed = 300;
+//		break;
+//	}
+//}

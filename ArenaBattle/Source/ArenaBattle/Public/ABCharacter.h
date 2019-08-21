@@ -164,8 +164,8 @@ private:
 
 	//My Custom Function Section
 	private:
-		void SetSpeedAttack(bool bResult);
+	/*	void SetSpeedAttack(bool bResult);
 		void SetSpeedNoraml(bool bResult);
-	
+	*/
 };
 

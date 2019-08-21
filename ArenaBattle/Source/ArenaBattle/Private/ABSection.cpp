@@ -31,7 +31,7 @@ AABSection::AABSection()
 	Trigger->SetupAttachment(RootComponent);
 	Trigger->SetRelativeLocation(FVector(0.0f, 0.0f, 250.0f));
 	Trigger->SetCollisionProfileName(TEXT("ABTrigger"));
-
+	Trigger->OnComponentBeginOverlap.AddDynamic(this, &AABSection::OnTriggerBeginOverlap);
 
 	/////////////////////////////////////////////////////
 	///////////////// Initaliaze Gate Meshs /////////
@@ -61,6 +61,9 @@ AABSection::AABSection()
 		NewGateTrigger->SetCollisionProfileName(TEXT("ABTrigger"));
 		GateTriggers.Add(NewGateTrigger);
 
+		//Add Gate Dynamic Delegate
+		NewGateTrigger->OnComponentBeginOverlap.AddDynamic(this, &AABSection::OnGateTriggerBeginOverlap);
+		NewGateTrigger->ComponentTags.Add(GateSocket);
 	}
 	////////////////////////////
 	////////SET STATE///////
@@ -129,9 +132,51 @@ void AABSection::OperateGates(bool bOpen)
 	}
 }
 
+//View Completed Statue
 void AABSection::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 	SetState(bNoBattle ? ESectionState::COMPLETE : ESectionState::READY);
 }
 
+void AABSection::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor*OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (CurrentState == ESectionState::READY)
+	{
+		SetState(ESectionState::BATTLE);
+	}
+}
+
+
+void AABSection::OnGateTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor*OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	ABCHECK(OverlappedComponent->ComponentTags.Num()==1);
+
+	FName ComponentTag = OverlappedComponent->ComponentTags[0];
+	FName SocketName = FName(*ComponentTag.ToString().Left(2));
+	if (!Mesh->DoesSocketExist(SocketName))
+	{
+		return;
+	}
+
+	FVector NewLocation = Mesh->GetSocketLocation(SocketName);
+
+	TArray<FOverlapResult> OverlapResults;
+	FCollisionQueryParams CollisionQueryParam(NAME_None, false, this);
+	FCollisionObjectQueryParams ObjectQueryParam(FCollisionObjectQueryParams::InitType::AllObjects);
+
+	bool bResult = GetWorld()->OverlapMultiByObjectType(OverlapResults, NewLocation, FQuat::Identity, ObjectQueryParam, 
+																					FCollisionShape::MakeSphere(775.0f), CollisionQueryParam);
+	
+	
+	if (!bResult)
+	{
+		auto NewSection = GetWorld()->SpawnActor<AABSection>(NewLocation, FRotator::ZeroRotator);
+
+	}
+	else
+	{
+		ABLOG(Warning, TEXT("New Section area is not empty."));
+	}
+
+}
