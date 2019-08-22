@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ABSection.h"
+#include"ABCharacter.h"
+#include"ABItemBox.h"
 
 // Sets default values
 AABSection::AABSection()
@@ -70,6 +72,11 @@ AABSection::AABSection()
 	///////////////////////////
 	CurrentState = ESectionState::READY;
 	bNoBattle = false;
+	////////////////////////////////////
+	////////SET Spawn Timer///////
+	///////////////////////////////////
+	EnemySpawnTime = 2.0f;
+	ItemBoxSpawnTime = 5.0f;
 }
 
 // Called when the game starts or when spawned
@@ -93,6 +100,7 @@ void AABSection::SetState(ESectionState NewState)
 {
 	switch (NewState)
 	{
+		//Case now Ready for Fight
 	case ESectionState::READY:
 	{
 		Trigger->SetCollisionProfileName(TEXT("ABTrigger"));
@@ -103,7 +111,7 @@ void AABSection::SetState(ESectionState NewState)
 		OperateGates(true);
 		break;
 	}
-
+	//Fighting
 	case ESectionState::BATTLE:
 	{
 		Trigger->SetCollisionProfileName(TEXT("NoCollision"));
@@ -113,10 +121,23 @@ void AABSection::SetState(ESectionState NewState)
 		}
 
 		OperateGates(false);
+
+		//Spawn NPC. Spawn NPC at Center of Section(stage) after 2 Seconds
+		GetWorld()->GetTimerManager().SetTimer(SpawnNPCTimerHandle, FTimerDelegate::CreateUObject(this, &AABSection::OnNPCSpawn), EnemySpawnTime, false);
+
+		//Spawn ItemBox. ItemBox will spawn at Near by NPC; about in 6M around. randomly
+		GetWorld()->GetTimerManager().SetTimer(SpawnItemBoxTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
+
+			FVector2D RandXY = FMath::RandPointInCircle(600.0f);
+			GetWorld()->SpawnActor<AABItemBox>(GetActorLocation() + FVector(RandXY, 30.0f), FRotator::ZeroRotator);
+
+		}), ItemBoxSpawnTime, false);
+
 		break;
 
 	}
 	
+	//Clear Stage 
 	case ESectionState::COMPLETE:
 	{
 		Trigger->SetCollisionProfileName(TEXT("NoCollision"));
@@ -196,4 +217,11 @@ void AABSection::OnGateTriggerBeginOverlap(UPrimitiveComponent* OverlappedCompon
 		ABLOG(Warning, TEXT("New Section area is not empty."));
 	}
 
+}
+
+
+
+void AABSection::OnNPCSpawn()
+{
+	GetWorld()->SpawnActor<AABCharacter>(GetActorLocation() + FVector::UpVector*88.0f, FRotator::ZeroRotator);
 }

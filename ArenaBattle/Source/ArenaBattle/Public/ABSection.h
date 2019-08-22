@@ -37,10 +37,15 @@ private:
 	ESectionState CurrentState;
 	void OperateGates(bool bOpen = true);
 
+	//Trigger Delegate Functions
 	UFUNCTION()
 		void OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor*OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 		void OnGateTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor*OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	//make navigation system
+	//Spawn Npc in New Section
+	void OnNPCSpawn();
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = Mesh, Meta = (AllowPrivateAccess = true))
@@ -57,4 +62,13 @@ private:
 private:
 	UPROPERTY(EditAnywhere, Category = State, Meta = (AllowPrivateAccess = true))
 		bool bNoBattle;
+
+	//NPC and Item Box Spawn UPROPERTY
+	UPROPERTY(EditAnywhere, Category = Spawn, Meta = (AllowPrivateAccess = true))
+		float EnemySpawnTime;
+	UPROPERTY(EditAnywhere, Category = Spawn, Meta = (AllowPrivateAccess = true))
+		float ItemBoxSpawnTime;
+
+	FTimerHandle SpawnNPCTimerHandle = {};
+	FTimerHandle SpawnItemBoxTimerHandle = {};
 };
