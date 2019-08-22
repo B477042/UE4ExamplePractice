@@ -103,7 +103,8 @@ void AABSection::SetState(ESectionState NewState)
 		OperateGates(true);
 		break;
 	}
-	case ESectionState::COMPLETE:
+
+	case ESectionState::BATTLE:
 	{
 		Trigger->SetCollisionProfileName(TEXT("NoCollision"));
 		for (UBoxComponent* GateTrigger : GateTriggers)
@@ -111,11 +112,26 @@ void AABSection::SetState(ESectionState NewState)
 			GateTrigger->SetCollisionProfileName(TEXT("NoCollision"));
 		}
 
+		OperateGates(false);
+		break;
+
+	}
+	
+	case ESectionState::COMPLETE:
+	{
+		Trigger->SetCollisionProfileName(TEXT("NoCollision"));
+		for (UBoxComponent* GateTrigger : GateTriggers)
+		{
+			GateTrigger->SetCollisionProfileName(TEXT("ABTrigger"));
+		}
+
 		OperateGates(true);
 		break;
 	}
 
+
 	}
+	
 
 	CurrentState = NewState;
 }
@@ -124,9 +140,10 @@ void AABSection::OperateGates(bool bOpen)
 {
 	for (UStaticMeshComponent* Gate : GateMeshes)
 	{
+		//if OPEN the DOOR!!
 		if(bOpen)
-		Gate->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));
-
+		Gate->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
+		//CLOSE the DOOR!!
 		else
 		Gate->SetRelativeRotation(FRotator::ZeroRotator);
 	}
