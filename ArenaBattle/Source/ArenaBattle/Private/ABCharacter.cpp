@@ -10,6 +10,8 @@
 #include"ABAIController.h"
 #include"ABCharacterSetting.h"
 #include"ABGameInstance.h"
+#include"ABPlayerController.h"
+
 
 // Sets default values
 AABCharacter::AABCharacter()
@@ -127,7 +129,19 @@ AABCharacter::AABCharacter()
 	//	ABLOG(Warning, TEXT("Character Blueprints: %s "), *CharacterAssets.ToString());
 	//
 
+	//chapter14 character state
+	AssetIndex = 4;
+	//All Default Setting is PREINIT State
+	//Hide Actor and UI until loading complete
+	SetActorHiddenInGame(true);
+	HPBarWidget->SetHiddenInGame(true);
+	//Keep safe Actor
+	bCanBeDamaged = false;
+
+
 }
+
+
 
 // Called when the game starts or when spawned
 void AABCharacter::BeginPlay()
@@ -173,6 +187,40 @@ void AABCharacter::BeginPlay()
 		}
 
 	}
+	//chapter14
+	////////////////////////////////////////////////
+	//////////////// Set State Loading /////////
+	//////////////////////////////////////////////
+	bIsPlayer = IsPlayerControlled();
+	if (bIsPlayer)
+	{
+		ABPlayerController = Cast<AABPlayerController>(GetController());
+		ABCHECK(nullptr != ABPlayerController);
+	}
+	else
+	{
+		ABAIController = Cast<AABAIController>(GetController());
+		ABCHECK(nullptr != ABAIController);
+	}
+
+	auto DefaultSetting = GetDefault<UABCharacterSetting>();
+	if (bIsPlayer)
+	{
+		AssetIndex = 4;
+	}
+	else
+	{
+		AssetIndex = FMath::RandRange(0, DefaultSetting->CharacterAssets.Num() - 1);
+
+	}
+
+	CharacterAssetToLoad = DefaultSetting->CharacterAssets[AssetIndex];
+	auto ABGameInstance = Cast<UABGameInstance>(GetGameInstance());
+	ABCHECK(nullptr != ABGameInstance);
+	AssetStreamingHandle = ABGameInstance->StreamableManager.RequestAsyncLoad
+																	(CharacterAssetToLoad,	FStreamableDelegate::CreateUObject(this,&AABCharacter::OnAssetLoadCompleted) );
+	SetCharacterState(ECharacterState::LOADING);
+
 }
 
 // Called every frame
@@ -620,6 +668,57 @@ void AABCharacter::OnAssetLoadCompleted()
 	{
 		GetMesh()->SetSkeletalMesh(LoadedAssetPath.Get());
 	}
+}
+
+void AABCharacter::SetCharacterState(ECharacterState NewState)
+{
+	ABCHECK(CurrentState != NewState);
+	CurrentState = NewState;
+
+	switch (CurrentState)
+	{
+	case ECharacterState::LOADING:
+		{
+			SetActorHiddenInGame(true);
+			HPBarWidget->SetHiddenInGame(true);
+			bCanBeDamaged = false;
+			break;
+		}
+
+		case ECharacterState::READY:
+		{
+			SetActorHiddenInGame(false);
+			HPBarWidget->SetHiddenInGame(false);
+			bCanBeDamaged = true;
+
+			CharacterStat->OnHPIsZero.AddLambda([this]()->void {
+
+				SetCharacterState(ECharacterState::DEAD);
+			});
+
+			auto CharacterWidget = Cast<UABCharacterWidget>(HPBarWidget->GetUserWidgetObject());
+			ABCHECK(nullptr != CharacterWidget);
+			CharacterWidget->BindCharacterStat(CharacterStat);
+			
+			break;
+		}
+		
+
+		case ECharacterState::DEAD:
+		{
+			SetActorHiddenInGame(false);
+			GetMesh()->SetHiddenInGame(false);
+			HPBarWidget->SetHiddenInGame(true);
+			ABAnim->SetDeadAnim();
+			bCanBeDamaged = false;
+			break;
+		}
+	}
+}
+
+ECharacterState AABCharacter::GetCharacterState() const
+{
+	return CurrentState;
 }
 
 

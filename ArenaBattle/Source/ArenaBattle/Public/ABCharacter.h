@@ -26,6 +26,11 @@ public:
 	// Sets default values for this character's properties
 	AABCharacter();
 
+	//chapter14 Character State
+	void SetCharacterState(ECharacterState NewState);
+	ECharacterState GetCharacterState()const;
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -159,6 +164,22 @@ private:
 	FSoftObjectPath CharacterAssetToLoad = FSoftObjectPath(nullptr);
 	TSharedPtr<struct FStreamableHandle> AssetStreamingHandle;
 	
+	//chapter14 chacter state
+	int32 AssetIndex = 0;
+	//Current State(ArenaBattle.h)
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, Meta = (AllowPrivateAccess = true))
+		ECharacterState CurrentState;
+	//For Judge is Player Controlled?
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, Meta = (AllowPrivateAccess = true))
+		bool bIsPlayer;
+
+	UPROPERTY()
+		class AABAIController* ABAIController;
+	UPROPERTY()
+		class AABPlayerController* ABPlayerController;
+
+
+
 	//My Custom Function Section
 	public:
 
