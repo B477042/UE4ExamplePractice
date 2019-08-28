@@ -102,6 +102,7 @@ public:
 	//	USkeletalMeshComponent* Weapon;
 
 	//chapter12 make NPC mode
+
 	virtual void PossessedBy(AController* NewController)override;
 	
 	//chapter12 make AI can Attack
@@ -178,8 +179,10 @@ private:
 	UPROPERTY()
 		class AABPlayerController* ABPlayerController;
 
-
-
+	//chpater14 use timer for make Dead state Character
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = State, Meta = (AllowPrivateAccess = true))
+		float DeadTimer;
+	FTimerHandle DeadTimerHandle = {};
 	//My Custom Function Section
 	public:
 
