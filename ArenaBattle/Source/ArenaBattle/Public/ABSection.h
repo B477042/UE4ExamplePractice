@@ -69,6 +69,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = Spawn, Meta = (AllowPrivateAccess = true))
 		float ItemBoxSpawnTime;
 
+	//TimerHandle Structer
 	FTimerHandle SpawnNPCTimerHandle = {};
+	//TimerHandle Structer
 	FTimerHandle SpawnItemBoxTimerHandle = {};
 };

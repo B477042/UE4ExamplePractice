@@ -21,11 +21,6 @@ public:
 	static const FName HomePosKey;
 	static const FName PatrolPosKey;
 	static const FName TargetKey;
-
-	//chapter14
-	void RunAI();
-	void StopAI();
-
 private:
 	//BT file
 	UPROPERTY()

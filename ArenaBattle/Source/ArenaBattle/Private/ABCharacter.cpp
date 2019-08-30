@@ -10,8 +10,6 @@
 #include"ABAIController.h"
 #include"ABCharacterSetting.h"
 #include"ABGameInstance.h"
-#include"ABPlayerController.h"
-
 
 // Sets default values
 AABCharacter::AABCharacter()
@@ -129,22 +127,7 @@ AABCharacter::AABCharacter()
 	//	ABLOG(Warning, TEXT("Character Blueprints: %s "), *CharacterAssets.ToString());
 	//
 
-	//chapter14 character state
-	AssetIndex = 4;
-	//All Default Setting is PREINIT State
-	//Hide Actor and UI until loading complete
-	SetActorHiddenInGame(true);
-	HPBarWidget->SetHiddenInGame(true);
-	//Keep safe Actor
-	bCanBeDamaged = false;
-
-
-	//chapter14 Dead Timer
-	DeadTimer = 5.0f;
-
 }
-
-
 
 // Called when the game starts or when spawned
 void AABCharacter::BeginPlay()
@@ -190,39 +173,6 @@ void AABCharacter::BeginPlay()
 		}
 
 	}
-	//chapter14
-	////////////////////////////////////////////////
-	//////////////// Set State Loading /////////
-	//////////////////////////////////////////////
-	bIsPlayer = IsPlayerControlled();
-	if (bIsPlayer)
-	{
-		ABPlayerController = Cast<AABPlayerController>(GetController());
-		ABCHECK(nullptr != ABPlayerController);
-	}
-	else
-	{
-		ABAIController = Cast<AABAIController>(GetController());
-		ABCHECK(nullptr != ABAIController);
-	}
-
-	auto DefaultSetting = GetDefault<UABCharacterSetting>();
-	if (bIsPlayer)
-	{
-		AssetIndex = 4;
-	}
-	else
-	{
-		AssetIndex = FMath::RandRange(0, DefaultSetting->CharacterAssets.Num() - 1);
-
-	}
-
-	CharacterAssetToLoad = DefaultSetting->CharacterAssets[AssetIndex];
-	auto ABGameInstance = Cast<UABGameInstance>(GetGameInstance());
-	ABCHECK(nullptr != ABGameInstance);
-	AssetStreamingHandle = ABGameInstance->StreamableManager.RequestAsyncLoad(CharacterAssetToLoad,	FStreamableDelegate::CreateUObject(this,&AABCharacter::OnAssetLoadCompleted) );
-	SetCharacterState(ECharacterState::LOADING);
-
 }
 
 // Called every frame
@@ -646,18 +596,18 @@ void AABCharacter::SetWeapon(AABWeapon* NewWeapon)
 void AABCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-//	//Player
-//	if (IsPlayerControlled())
-//	{
-//		SetControlMode(EControlMode::GTA);
-//		GetCharacterMovement()->MaxWalkSpeed = 600.0f;
-//	}
-//	//AI
-//	else
-//	{
-//		SetControlMode(EControlMode::NPC);
-//		GetCharacterMovement()->MaxWalkSpeed = 300.0f;
-//	}
+	//Player
+	if (IsPlayerControlled())
+	{
+		SetControlMode(EControlMode::GTA);
+		GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+	}
+	//AI
+	else
+	{
+		SetControlMode(EControlMode::NPC);
+		GetCharacterMovement()->MaxWalkSpeed = 300.0f;
+	}
 }
 
 //chapter13 use INI file to initialize by  StreamablHandl
@@ -666,109 +616,10 @@ void AABCharacter::OnAssetLoadCompleted()
 {
 	AssetStreamingHandle->ReleaseHandle();
 	TSoftObjectPtr<USkeletalMesh>LoadedAssetPath(CharacterAssetToLoad);
-	ABCHECK(LoadedAssetPath.IsValid());
-
 	if (LoadedAssetPath.IsValid())
 	{
 		GetMesh()->SetSkeletalMesh(LoadedAssetPath.Get());
-		SetCharacterState(ECharacterState::READY);
 	}
-}
-
-void AABCharacter::SetCharacterState(ECharacterState NewState)
-{
-	ABCHECK(CurrentState != NewState);
-	CurrentState = NewState;
-
-	switch (CurrentState)
-	{
-	case ECharacterState::LOADING:
-		{
-			//chapter14. Initalize Input Control to Disable
-		if (bIsPlayer)
-		{
-			DisableInput(ABPlayerController);
-		}
-			SetActorHiddenInGame(true);
-			HPBarWidget->SetHiddenInGame(true);
-			bCanBeDamaged = false;
-			break;
-		}
-
-		case ECharacterState::READY:
-		{
-			SetActorHiddenInGame(false);
-			HPBarWidget->SetHiddenInGame(false);
-			bCanBeDamaged = true;
-
-			CharacterStat->OnHPIsZero.AddLambda([this]() -> void {
-				SetCharacterState(ECharacterState::DEAD);
-			});
-
-			auto CharacterWidget = Cast<UABCharacterWidget>(HPBarWidget->GetUserWidgetObject());
-			ABCHECK(nullptr != CharacterWidget);
-			CharacterWidget->BindCharacterStat(CharacterStat);
-
-			//chapter14. Move PossessedBy code 
-			if (bIsPlayer)
-			{
-				SetControlMode(EControlMode::GTA);
-				GetCharacterMovement()->MaxWalkSpeed = 600.0f;
-				//chapter14. Activate Input Control
-				EnableInput(ABPlayerController);
-			}
-			//AI
-			else
-			{
-				SetControlMode(EControlMode::NPC);
-				GetCharacterMovement()->MaxWalkSpeed = 300.0f;
-				ABAIController->RunAI();
-			}
-
-			break;
-		}
-		
-
-		case ECharacterState::DEAD:
-		{
-			SetActorHiddenInGame(false);
-			GetMesh()->SetHiddenInGame(false);
-			HPBarWidget->SetHiddenInGame(true);
-			ABAnim->SetDeadAnim();
-			bCanBeDamaged = false;
-			//Disable AI or Input
-			if (bIsPlayer)
-			{
-				DisableInput(ABPlayerController);
-			}
-			else
-			{
-				ABAIController->StopAI();
-			}
-			
-			
-			GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda([this]() -> void {
-
-				if (bIsPlayer)
-				{
-					ABPlayerController->RestartLevel();
-				}
-				else
-				{
-					Destroy();
-				}
-
-			}), DeadTimer, false);
-
-
-			break;
-		}
-	}
-}
-
-ECharacterState AABCharacter::GetCharacterState() const
-{
-	return CurrentState;
 }
 
 
