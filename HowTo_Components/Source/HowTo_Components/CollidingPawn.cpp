@@ -52,20 +52,34 @@ ACollidingPawn::ACollidingPawn()
 	// 기본 플레이어 컨트롤 획득
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 
+	// 무브먼트 컴포넌트 인스턴스를 생성하고, 루트를 업데이트하라 이릅니다.
+	/*
+	지금까지 봐 온 다른 컴포넌트 와는 달리, 이 컴포넌트 는 우리 컴포넌트 계층구조에 붙일 필요가 없습니다. 
+	왜냐면 우리 컴포넌트 는 모두 씬 컴포넌트 유형이었는데, 애초부터 물리적 위치가 필요한 것들이기 때문입니다. 
+	하지만 Movement Controller 는 씬 컴포넌트 가 아니라, 물리적 오브젝트를 나타내지 않기에, 물리적 위치에 존재한다든가
+	다른 컴포넌트 에 물리적으로 붙인다든가 하는 개념은 적용되지 않습니다.
+	*/
+	OurMovementComponent = CreateDefaultSubobject<UCollidingPawnMovementComponent>(TEXT("CustomMovementComponent"));
+	OurMovementComponent->UpdatedComponent = RootComponent;
+	
+	bIsIllusion = false;
+	RemainTimeOfIllusion = 0.0f;
+
 }
 
 // Called when the game starts or when spawned
 void ACollidingPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	CreateIllusion();
 }
 
 // Called every frame
 void ACollidingPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	//CreateIllusion();
+	TickIllusion();
 }
 
 // Called to bind functionality to input
@@ -73,5 +87,102 @@ void ACollidingPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	InputComponent->BindAction("ParticleToggle", IE_Pressed, this, &ACollidingPawn::ParticleToggle);
+
+	InputComponent->BindAxis("MoveForward", this, &ACollidingPawn::MoveForward);
+	InputComponent->BindAxis("MoveRight", this, &ACollidingPawn::MoveRight);
+	InputComponent->BindAxis("Turn", this, &ACollidingPawn::Turn);
+
+}
+
+UPawnMovementComponent* ACollidingPawn::GetMovementComponent() const
+{
+	return OurMovementComponent;
+}
+
+void ACollidingPawn::MoveForward(float AxisValue)
+{
+	if (OurMovementComponent && (OurMovementComponent->UpdatedComponent == RootComponent))
+	{
+		OurMovementComponent->AddInputVector(GetActorForwardVector() * AxisValue);
+	}
+}
+
+void ACollidingPawn::MoveRight(float AxisValue)
+{
+	if (OurMovementComponent && (OurMovementComponent->UpdatedComponent == RootComponent))
+	{
+		OurMovementComponent->AddInputVector(GetActorRightVector() * AxisValue);
+	}
+}
+
+void ACollidingPawn::Turn(float AxisValue)
+{
+	FRotator NewRotation = GetActorRotation();
+	NewRotation.Yaw += AxisValue;
+	SetActorRotation(NewRotation);
+}
+
+void ACollidingPawn::ParticleToggle()
+{
+	if (OurParticleSystem && OurParticleSystem->Template)
+	{
+		OurParticleSystem->ToggleActive();
+	}
+}
+
+bool ACollidingPawn::CreateIllusion()
+{
+	//illusion cant make illusion
+
+	if (AmIIllusion())return false;
+
+	//first illusion at zero point
+	ACollidingPawn* pNewActor=GetWorld()->SpawnActor<ACollidingPawn>(FVector::ZeroVector, FRotator::ZeroRotator);
+	if (!pNewActor)return false;
+	pNewActor->SetIllusion(true);
+
+	//second illusion at 0,20,0
+	FVector Location2 = { 0.0f, 20.0f, 0.0f };
+	 pNewActor = GetWorld()->SpawnActor<ACollidingPawn>(Location2, FRotator::ZeroRotator);
+	if (!pNewActor)return false;
+	pNewActor->SetIllusion(true);
+
+	//third illusion point at 20,30,0
+	FVector  Location3 = { 20.0f,30.0f,0.0f };
+	 pNewActor = GetWorld()->SpawnActor<ACollidingPawn>(FVector::ZeroVector, FRotator::ZeroRotator);
+	if (!pNewActor)return false;
+	pNewActor->SetIllusion(true);
+
+	return true;
+}
+
+bool ACollidingPawn::AmIIllusion()
+{
+	return bIsIllusion;
+}
+
+void ACollidingPawn::TickIllusion()
+{
+	if (RemainTimeOfIllusion <= 0.0f)return;
+	RemainTimeOfIllusion -= 10.0f;
+
+	if (RemainTimeOfIllusion < 0.0f)
+		RemainTimeOfIllusion = 0.0f;
+}
+
+bool ACollidingPawn::SetIllusion(bool bTemp)
+{
+	bIsIllusion = bTemp;
+	RemainTimeOfIllusion = 100.0f;
+	return true;
+}
+
+bool ACollidingPawn::SetCirculatePoint(AActor * pOther)
+{
+	if (!pOther)return false;
+
+	CirculatePointActor = pOther;
+	return true;
 }
 

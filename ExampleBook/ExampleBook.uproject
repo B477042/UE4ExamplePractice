@@ -6,22 +6,11 @@
 	"Enterprise": true,
 	"Modules": [
 		{
-			"Name": "ArenaBattleSetting",
-			"Type": "Runtime",
-			"LoadingPhase": "PreDefault",
-			"AdditionalDependencies": [
-				"CoreUObject"
-			]
-		},
-		{
-			"Name": "ArenaBattle",
+			"Name": "ExampleBook",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
-				"Engine",
-				"UMG",
-				"AIModule",
-				"ArenaBattleSetting"
+				"Engine"
 			]
 		}
 	],

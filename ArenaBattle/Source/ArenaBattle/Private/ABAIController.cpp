@@ -34,5 +34,6 @@ void AABAIController::Possess(APawn* InPawn)
 			ABLOG(Error, TEXT("AIController couldnt run behavior tree!!"));
 		}
 	}
+	ABLOG(Warning, TEXT("AI online"));
 }
 

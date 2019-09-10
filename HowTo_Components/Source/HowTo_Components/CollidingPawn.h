@@ -4,6 +4,7 @@
 
 #include "EngineMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "CollidingPawnMovementComponent.h"
 #include "CollidingPawn.generated.h"
 
 UCLASS()
@@ -26,4 +27,30 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	UParticleSystemComponent* OurParticleSystem;
+	class UCollidingPawnMovementComponent* OurMovementComponent;
+	virtual UPawnMovementComponent* GetMovementComponent() const override;
+	void MoveForward(float AxisValue);
+	void MoveRight(float AxisValue);
+	void Turn(float AxisValue);
+	void ParticleToggle();
+
+public:
+	bool CreateIllusion();
+	bool AmIIllusion();
+	void TickIllusion();
+	bool SetIllusion(bool bTemp);
+	bool SetCirculatePoint(AActor*pOther);
+private:
+	//if this pawn is circle around other actor. Edit in editor to point
+	UPROPERTY(EditAnywhere)
+		AActor* CirculatePointActor;
+	UPROPERTY(EditAnywhere, Category = SpawnTime, Meta = (AllowPrivateAccess = true))
+		float RemainTimeOfIllusion;
+private:
+	/*i am not illusion->flase
+		i am illusion -> true
+	*/
+	bool bIsIllusion;
+
+	
 };
