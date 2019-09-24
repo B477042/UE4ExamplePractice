@@ -104,6 +104,13 @@ public:
 	void Attack();
 	FOnAttackEndDelegate OnAttackEnd;
 
+	/*
+	chapter14
+	*/
+	void SetCharacterState(ECharacterState NewState);
+	ECharacterState GetCharacterState()const;
+
+
 private:
 	void UpDown(float NewAxisValue);
 	void LeftRight(float NewAxisValue);
@@ -125,6 +132,12 @@ private:
 	//chapter13 use INI file to initialize by  StreamablHandl
 	//https://docs.unrealengine.com/ko/Programming/Assets/AsyncLoading/index.html
 	void OnAssetLoadCompleted();
+
+
+	//chapter13 use INI file to initialize by  StreamablHandl
+	//https://docs.unrealengine.com/ko/Programming/Assets/AsyncLoading/index.html
+	FSoftObjectPath CharacterAssetToLoad = FSoftObjectPath(nullptr);
+	TSharedPtr<struct FStreamableHandle> AssetStreamingHandle;
 
 	//UPROPERTY Section
 private:
@@ -154,11 +167,23 @@ private:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		float AttackRadius;
 
-	//chapter13 use INI file to initialize by  StreamablHandl
-	//https://docs.unrealengine.com/ko/Programming/Assets/AsyncLoading/index.html
-	FSoftObjectPath CharacterAssetToLoad = FSoftObjectPath(nullptr);
-	TSharedPtr<struct FStreamableHandle> AssetStreamingHandle;
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, Meta = (AllowPrivateAccess = true))
+		ECharacterState CurrentState;
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = State, Meta = (AllowPrivateAccess = true))
+		bool bIsPlayer;
+	UPROPERTY()
+		class AABAIController*ABAIController;
+	UPROPERTY()
+		class AABPlayerController* ABPlayerController;
+	//chpater14 Devide PossedBy Function
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = State, Meta = (AllowPrivateAccess = true))
+		float DeadTimer;
+
+	FTimerHandle DeadTimerHandle = {};
 	
+	
+
+
 	//My Custom Function Section
 	public:
 

@@ -26,7 +26,7 @@ AABAIController::AABAIController()
 void AABAIController::Possess(APawn* InPawn)
 {
 	Super::Possess(InPawn);
-	if (UseBlackboard(BBAsset, Blackboard))
+	/*if (UseBlackboard(BBAsset, Blackboard))
 	{
 		Blackboard->SetValueAsVector(HomePosKey, InPawn->GetActorLocation());
 		if (!RunBehaviorTree(BTAsset))
@@ -34,6 +34,29 @@ void AABAIController::Possess(APawn* InPawn)
 			ABLOG(Error, TEXT("AIController couldnt run behavior tree!!"));
 		}
 	}
+	ABLOG(Warning, TEXT("AI online"));*/
+	//before chapter 14
+}
+
+void AABAIController::RunAI()
+{
+	if (UseBlackboard(BBAsset, Blackboard))
+	{
+		Blackboard->SetValueAsVector(HomePosKey, GetPawn()->GetActorLocation());
+		if (!RunBehaviorTree(BTAsset))
+		{
+			ABLOG(Error, TEXT("AIController couldnt run behavior tree!!"));
+		}
+	}
 	ABLOG(Warning, TEXT("AI online"));
+}
+
+void AABAIController::StopAI()
+{
+	auto BehaviorTreeComponent = Cast<UBehaviorTreeComponent>(BrainComponent);
+	if (nullptr != BehaviorTreeComponent)
+	{
+		BehaviorTreeComponent->StopTree(EBTStopMode::Safe);
+	}
 }
 

@@ -10,6 +10,7 @@
 #include"ABAIController.h"
 #include"ABCharacterSetting.h"
 #include"ABGameInstance.h"
+#include"ABPlayerController.h"
 
 // Sets default values
 AABCharacter::AABCharacter()
@@ -116,17 +117,33 @@ AABCharacter::AABCharacter()
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	//chapter13 Project Setting using INI file. check its succeedd
 	auto DefaultSetting = GetDefault<UABCharacterSetting>();
+	if (DefaultSetting->CharacterAssets.Num() > 0)
+	{
+		//chapter 13 Present ini Asset List
+		for (auto CharacterAssets : DefaultSetting->CharacterAssets)
+		{
+				ABLOG(Warning, TEXT("Character Assets  : %s "), *CharacterAssets.ToString());
+		
+		}
 
-
+	}
 	
-	for(auto CharacterAssets : DefaultSetting->CharacterAssets)
-		ABLOG(Warning, TEXT("Character Assets : %s "), *CharacterAssets.ToString());
+		
 	
 	//
 	//for(	auto CharacterAssets : DefaultSetting->CharacterBlueprints)
 	//	ABLOG(Warning, TEXT("Character Blueprints: %s "), *CharacterAssets.ToString());
 	//
 
+	/*
+	chapter14 
+	This Code Scribe Set Character State to "PREINIT"
+	*/
+	SetActorHiddenInGame(true);
+	HPBarWidget->SetHiddenInGame(true);
+	bCanBeDamaged = false;
+	
+	DeadTimer = 5.0f;
 }
 
 // Called when the game starts or when spawned
@@ -161,18 +178,60 @@ void AABCharacter::BeginPlay()
 	//chapter13 use INI file to initialize by  StreamablHandl
 	//If enermy is AI
 	//https://docs.unrealengine.com/ko/Programming/Assets/AsyncLoading/index.html
-	if (!IsPlayerControlled())
-	{
-		auto DefaultSetting = GetDefault<UABCharacterSetting>();
-		CharacterAssetToLoad = DefaultSetting->CharacterAssets[0];//only one asset in the ini file list. shinbi
-		auto ABGameInstance = Cast<UABGameInstance>(GetGameInstance());
-		if (nullptr != ABGameInstance)
-		{
-			AssetStreamingHandle = ABGameInstance->StreamableManager.RequestAsyncLoad(CharacterAssetToLoad, FStreamableDelegate::CreateUObject(this, &AABCharacter::OnAssetLoadCompleted));
-			ABLOG(Warning, TEXT("Streamalbe Manager Succeeeded"));
-		}
+	//if (!IsPlayerControlled())
+	//{
+	//	auto DefaultSetting = GetDefault<UABCharacterSetting>();
+	//	CharacterAssetToLoad = DefaultSetting->CharacterAssets[0];//only one asset in the ini file list. shinbi
+	//	auto ABGameInstance = Cast<UABGameInstance>(GetGameInstance());
+	//	if (nullptr != ABGameInstance)
+	//	{
+	//		AssetStreamingHandle = ABGameInstance->StreamableManager.RequestAsyncLoad(CharacterAssetToLoad, FStreamableDelegate::CreateUObject(this, &AABCharacter::OnAssetLoadCompleted));
+	//		ABLOG(Warning, TEXT("Streamalbe Manager Succeeeded"));
+	//	}
 
+	//}
+	/*
+	chapter 14
+	Judge Is Player Controller??
+	
+	*/
+	bIsPlayer = IsPlayerControlled();
+	if (bIsPlayer)
+	{
+		
+		ABPlayerController = Cast<AABPlayerController>(GetController());
+		ABCHECK(nullptr != ABPlayerController);
+		//Debug
+		ABLOG(Warning, TEXT("Player Control Possed"));
 	}
+	else
+	{
+		ABAIController = Cast<AABAIController>(GetController());
+		ABCHECK(nullptr != ABAIController);
+	}
+
+	
+
+	//auto ABGameInstance = Cast<UABGameInstance>(GetGameInstance());
+	//ABCHECK(nullptr != ABGameInstance);
+	//AssetStreamingHandle = ABGameInstance->StreamableManager.RequestAsyncLoad(CharacterAssetToLoad, FStreamableDelegate::CreateUObject(this, &AABCharacter::OnAssetLoadCompleted));
+	//SetCharacterState(ECharacterState::LOADING);
+
+	//What is Streamable ??
+	auto DefaultSetting = GetDefault<UABCharacterSetting >();
+
+	CharacterAssetToLoad = DefaultSetting->CharacterAssets[0];//we have only one Character Asset Shinbi
+	auto ABGameInstance = Cast<UABGameInstance > (GetGameInstance());
+	ABCHECK(nullptr != ABGameInstance);
+	ABLOG(Error, TEXT("Character Asset To Load Path : %s"), *CharacterAssetToLoad.ToString());
+
+
+	AssetStreamingHandle = ABGameInstance->StreamableManager.RequestAsyncLoad(CharacterAssetToLoad, FStreamableDelegate::CreateUObject(this, &AABCharacter::OnAssetLoadCompleted));
+	//USkeletalMesh* AssetLoaded = Cast<USkeletalMesh>(AssetStreamingHandle->GetLoadedAsset());
+	//ABLOG(Error, TEXT("0 Character Asset To Load Path : %s"), *AssetLoaded->GetPathName());
+
+	SetCharacterState(ECharacterState::LOADING);
+
 }
 
 // Called every frame
@@ -216,6 +275,10 @@ void AABCharacter::Tick(float DeltaTime)
 		break;
 	}
 
+
+	//Debug
+	//if(Skeletalmesh)
+
 }
 
 // Called to bind functionality to input
@@ -235,6 +298,100 @@ void AABCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAction(TEXT("ViewChange"),EInputEvent::IE_Pressed, this, &AABCharacter::ViewChange);
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &AABCharacter::Jump);
 	PlayerInputComponent->BindAction(TEXT("Attack"), EInputEvent::IE_Pressed, this, &AABCharacter::Attack);
+}
+
+void AABCharacter::SetCharacterState(ECharacterState NewState)
+{
+	ABCHECK(CurrentState !=NewState);
+	CurrentState = NewState;
+	/*
+	Subscribe Each State at "ArenaBattle.h"
+	LOOK AT SUBSCRIBE
+	*/
+	switch (CurrentState)
+	{
+	case ECharacterState::LOADING:
+		{
+		if (bIsPlayer)
+		{
+			DisableInput(ABPlayerController);
+		}
+
+			SetActorHiddenInGame(true);
+			HPBarWidget->SetHiddenInGame(true);
+			bCanBeDamaged = false;
+			ABLOG(Warning, TEXT("character state : Loading"));
+
+			break;
+		}
+
+	case ECharacterState ::READY:
+	{
+		SetActorHiddenInGame(false);
+		HPBarWidget->SetHiddenInGame(false);
+		bCanBeDamaged = true;
+		CharacterStat->OnHPIsZero.AddLambda([this]()->void {
+			SetCharacterState(ECharacterState::DEAD);
+		});
+		
+		auto CharacterWidget = Cast<UABCharacterWidget>(HPBarWidget->GetUserWidgetObject());
+		ABCHECK(nullptr != CharacterWidget);
+		CharacterWidget->BindCharacterStat(CharacterStat);
+		//Player
+		if (bIsPlayer)
+		{
+			SetControlMode(EControlMode::GTA);
+			GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+			EnableInput(ABPlayerController);
+		}
+		//AI
+		else
+		{
+			SetControlMode(EControlMode::NPC);
+			GetCharacterMovement()->MaxWalkSpeed = 300.0f;
+			ABAIController->RunAI();
+		}
+
+		ABLOG(Warning, TEXT("character state : Ready"));
+		break;
+	}
+	case ECharacterState::DEAD:
+	{
+		SetActorEnableCollision(false);
+		GetMesh()->SetHiddenInGame(false);
+		HPBarWidget->SetHiddenInGame(true);
+		ABAnim->SetDeadAnim();
+		bCanBeDamaged = false;
+
+		if (bIsPlayer)
+		{
+			DisableInput(ABPlayerController);
+		}
+		else
+		{
+			ABAIController->StopAI();
+		}
+
+		GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda([this]()->void {
+			if (bIsPlayer)
+			{
+				ABPlayerController->RestartLevel();
+			}
+			else
+			{
+				Destroy();
+			}
+		}), DeadTimer, false);
+
+		ABLOG(Warning, TEXT("character state : Dead"));
+		break;
+	}
+	}
+}
+
+ECharacterState AABCharacter::GetCharacterState() const
+{
+	return CurrentState;
 }
 
 void AABCharacter::UpDown(float NewAxisValue)
@@ -596,31 +753,69 @@ void AABCharacter::SetWeapon(AABWeapon* NewWeapon)
 void AABCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	//Player
-	if (IsPlayerControlled())
-	{
-		SetControlMode(EControlMode::GTA);
-		GetCharacterMovement()->MaxWalkSpeed = 600.0f;
-	}
-	//AI
-	else
-	{
-		SetControlMode(EControlMode::NPC);
-		GetCharacterMovement()->MaxWalkSpeed = 300.0f;
-	}
+	//this code moved to SetCharacterState Function in chapter 14
+	////Player
+	//if (IsPlayerControlled())
+	//{
+	//	SetControlMode(EControlMode::GTA);
+	//	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+	//}
+	////AI
+	//else
+	//{
+	//	SetControlMode(EControlMode::NPC);
+	//	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
+	//}
 }
 
 //chapter13 use INI file to initialize by  StreamablHandl
 	//https://docs.unrealengine.com/ko/Programming/Assets/AsyncLoading/index.html
 void AABCharacter::OnAssetLoadCompleted()
 {
+	ABLOG(Warning, TEXT("that func called"));
 	AssetStreamingHandle->ReleaseHandle();
 	TSoftObjectPtr<USkeletalMesh>LoadedAssetPath(CharacterAssetToLoad);
+
+	ABLOG(Error, TEXT("Character Asset To Load Path : %s"), *CharacterAssetToLoad.ToString());
+	//ABCHECK(LoadedAssetPath.IsValid());
+		GetMesh()->SetSkeletalMesh(LoadedAssetPath.Get());
+		SetCharacterState(ECharacterState::READY);
 	if (LoadedAssetPath.IsValid())
 	{
-		GetMesh()->SetSkeletalMesh(LoadedAssetPath.Get());
+		
+		ABLOG(Warning, TEXT("Problem Ocurred at AssetLoadComplete"));
 	}
+
+
+	/*USkeletalMesh* AssetLoaded = Cast<USkeletalMesh>(AssetStreamingHandle->GetLoadedAsset());
+	AssetStreamingHandle.Reset();
+	if (nullptr != AssetLoaded)
+	{
+		GetMesh()->SetSkeletalMesh(AssetLoaded);
+	}*/
+	////Example Code Copy
+	//USkeletalMesh* AssetLoaded = Cast<USkeletalMesh>(AssetStreamingHandle->GetLoadedAsset());
+	//AssetStreamingHandle.Reset();
+	//ABCHECK(nullptr != AssetLoaded);
+	//GetMesh()->SetSkeletalMesh(AssetLoaded);
+
+	//SetCharacterState(ECharacterState::READY);
+
+	/*ABLOG(Error, TEXT("Character Asset To Load Path : %s"), *CharacterAssetToLoad.ToString());
+
+	USkeletalMesh* AssetLoaded = Cast<USkeletalMesh>(AssetStreamingHandle->GetLoadedAsset());
+
+	ABLOG(Error, TEXT("1 Character Asset To Load Path : %s"), *AssetLoaded->GetPathName());
+	AssetStreamingHandle.Reset();
+
+	ABLOG(Error, TEXT("2 Character Asset To Load Path : %s"), *AssetLoaded->GetPathName());
+	ABCHECK(nullptr == AssetLoaded);
+	GetMesh()->SetSkeletalMesh(AssetLoaded);
+	ABLOG(Error, TEXT("3 Character Asset To Load Path : %s"), *AssetLoaded->GetPathName());
+
+	SetCharacterState(ECharacterState::READY);*/
 }
+	
 
 
 

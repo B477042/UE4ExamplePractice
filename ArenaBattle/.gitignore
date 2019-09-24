@@ -110,4 +110,6 @@ Build/Android/res/*
 Build/Android/res/*/*
 !Build/Android/res/*/*.png
 
+
+Content/
 # End of https://www.gitignore.io/api/c++,unrealengine
