@@ -5,6 +5,9 @@
 #include"BehaviorTree/BlackboardData.h"
 #include"BehaviorTree/BlackboardComponent.h"
 
+
+
+
 const FName AABAIController::HomePosKey(TEXT("HomePos"));
 const FName AABAIController::PatrolPosKey(TEXT("PatrolPos"));
 const FName AABAIController::TargetKey(TEXT("Target"));

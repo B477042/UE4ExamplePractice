@@ -11,6 +11,8 @@
 #include"ABCharacterSetting.h"
 #include"ABGameInstance.h"
 #include"ABPlayerController.h"
+#include"ABPlayerState.h"//chapter14
+#include"ABHUDWidget.h"//chatper 14
 
 // Sets default values
 AABCharacter::AABCharacter()
@@ -315,6 +317,18 @@ void AABCharacter::SetCharacterState(ECharacterState NewState)
 		if (bIsPlayer)
 		{
 			DisableInput(ABPlayerController);
+		
+
+
+			//chpater 14
+			//PlayerState클래스와 Player Character간의 레벨 정보의 동기화.
+			//플레이어 컨트롤러가 빙의할 때, 캐릭터의 PlayerState 속성에 플레이어 스테이트의 포인터를 저장하므로 정보를 바로 가져올 수 있다
+			auto ABPlayerState = Cast<AABPlayerState>(GetPlayerState());
+			ABCHECK(nullptr != ABPlayerState);
+			CharacterStat->SetNewLevel(ABPlayerState->GetCharacterLevel());
+			
+
+			
 		}
 
 			SetActorHiddenInGame(true);
@@ -340,6 +354,11 @@ void AABCharacter::SetCharacterState(ECharacterState NewState)
 		//Player
 		if (bIsPlayer)
 		{
+			//chapter14 HUD UI
+			//HUD Widget과 Stat을 연결시킨다
+			ABPlayerController->GetHUDWidget()->BindCharacterStat(CharacterStat);
+
+
 			SetControlMode(EControlMode::GTA);
 			GetCharacterMovement()->MaxWalkSpeed = 600.0f;
 			EnableInput(ABPlayerController);
