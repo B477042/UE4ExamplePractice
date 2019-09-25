@@ -38,7 +38,7 @@ public:
 	//chapter 14 EXP
 	float GetExpRatio()const;
 	bool AddExp(int32 IncomeExp);
-
+	void AddGameScore();
 	//chapter 14 HUD UI. 델리게이트 변수
 	FOnPlayerStateChangedDelegate OnPlayerStateChanged;
 

@@ -32,6 +32,7 @@ public:
 
 	class UABHUDWidget* GetHUDWidget() const;//chapter 14 HUD UI
 	void NPCKill(class AABCharacter*KilledNPC)const;//chapter 14 EXP
+	void AddGameScore();
 
 protected:
 	virtual void BeginPlay()override;
