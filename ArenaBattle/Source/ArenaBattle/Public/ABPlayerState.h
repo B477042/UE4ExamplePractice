@@ -18,7 +18,11 @@
 	PlayerController에서 띄워주는 HUD에 대하여
 	데이터를 연동시켜준다
 	델리게이트는 플레이어 데이터가 변경될 때 HUD에 신호를 보내  HUD가 관련 UI위젯을 업데이트 하도록 만든다
+
+	EXP UI
+	Player의 Exp 정보를 저장
 */
+
 
 DECLARE_MULTICAST_DELEGATE(FOnPlayerStateChangedDelegate);//chapter 14
 
@@ -31,6 +35,9 @@ public:
 	int32 GetGameScore()const;
 	int32 GetCharacterLevel()const;
 	void InitPlayerData();
+	//chapter 14 EXP
+	float GetExpRatio()const;
+	bool AddExp(int32 IncomeExp);
 
 	//chapter 14 HUD UI. 델리게이트 변수
 	FOnPlayerStateChangedDelegate OnPlayerStateChanged;
@@ -40,4 +47,11 @@ protected:
 		int32 GameScore;
 	UPROPERTY(Transient)
 		int32 CharacterLevel;
+	//chapter 14 Exp
+	UPROPERTY(Transient)
+		int32 Exp;
+private:
+	//chapter 14
+	void SetCharacterLevel(int32 NewCharacterLevel);
+	struct FABCharacterData* CurrentStatData;
 };

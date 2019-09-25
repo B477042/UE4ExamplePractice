@@ -75,14 +75,18 @@ void UABCharacterStatComponent::SetHP(float NewHP)
 		OnHPIsZero.Broadcast();
 	}
 }
+int32 UABCharacterStatComponent::GetDropExp() const
+{
+	return CurrentStatData->DropExp;
+}
 //send Character's ATK point
-float UABCharacterStatComponent::GetAttack()
+float UABCharacterStatComponent::GetAttack() const
 {
 	ABCHECK(nullptr != CurrentStatData, 0.0f);
 	return CurrentStatData->Attack;
 }
 
-float UABCharacterStatComponent::GetHPRatio()
+float UABCharacterStatComponent::GetHPRatio() const
 {
 	ABLOG(Warning, TEXT("Call HP Ratio"));
 	ABCHECK(nullptr != CurrentStatData, 0.0f);

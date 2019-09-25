@@ -3,6 +3,7 @@
 #include "ABPlayerController.h"
 #include"ABHUDWidget.h"
 #include"ABPlayerState.h"
+#include"ABCharacter.h"
 
 AABPlayerController::AABPlayerController()
 {
@@ -31,6 +32,11 @@ UABHUDWidget * AABPlayerController::GetHUDWidget() const
 	return HUDWidget;
 }
 
+void AABPlayerController::NPCKill(AABCharacter * KilledNPC) const
+{
+	ABPlayerState->AddExp(KilledNPC->GetDropExp());
+}
+
 void AABPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -49,7 +55,7 @@ void AABPlayerController::BeginPlay()
 	/*
 		HUD Widget과 Player State를 연결한다
 	*/
-	auto ABPlayerState = Cast<AABPlayerState>(PlayerState);
+	 ABPlayerState = Cast<AABPlayerState>(PlayerState);
 	ABCHECK(nullptr != ABPlayerState);
 	HUDWidget->BindPlayerState(ABPlayerState);
 	ABPlayerState->OnPlayerStateChanged.Broadcast();

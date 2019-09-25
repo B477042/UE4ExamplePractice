@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "ABPlayerController.generated.h"
 
+
 /**
  * 
  */
@@ -30,6 +31,8 @@ public:
 	
 
 	class UABHUDWidget* GetHUDWidget() const;//chapter 14 HUD UI
+	void NPCKill(class AABCharacter*KilledNPC)const;//chapter 14 EXP
+
 protected:
 	virtual void BeginPlay()override;
 
@@ -38,6 +41,8 @@ protected:
 private:
 	UPROPERTY()
 		class UABHUDWidget* HUDWidget;//Chapter 14 HUD UI
+	UPROPERTY()
+		class AABPlayerState* ABPlayerState;//chapter 14 Exp
 
 
 };

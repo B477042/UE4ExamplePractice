@@ -109,7 +109,8 @@ public:
 	*/
 	void SetCharacterState(ECharacterState NewState);
 	ECharacterState GetCharacterState()const;
-
+	//chapter 14 Exp
+	int32 GetDropExp()const;
 
 private:
 	void UpDown(float NewAxisValue);

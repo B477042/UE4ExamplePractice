@@ -413,6 +413,11 @@ ECharacterState AABCharacter::GetCharacterState() const
 	return CurrentState;
 }
 
+int32 AABCharacter::GetDropExp() const
+{
+	return CharacterStat->GetDropExp();
+}
+
 void AABCharacter::UpDown(float NewAxisValue)
 {
 	
@@ -743,6 +748,15 @@ float AABCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& Da
 
 	//send calculated Damage to StatComponent
 	CharacterStat->SetDamage(FinalDamage);
+
+	//chapter 14 Exp
+	if (CurrentState == ECharacterState::DEAD)
+	{
+		auto ABPlayerController = Cast<AABPlayerController>(EventInstigator);
+		ABCHECK(nullptr != ABPlayerController,0.0f);
+		ABPlayerController->NPCKill(this);
+
+	}
 
 	return FinalDamage;
 }
